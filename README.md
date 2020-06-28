@@ -24,12 +24,12 @@ public class UserService
         _capBus = capPublisher;
     }
 	
-	[CapTransaction(AutoCommit = false)]
-	public virtual long AddWithTran(User user)
-	{
-        _capBus.Publish("xxx.services.show.time", DateTime.Now);
-		return _userRepository.Insert(user);
-	}
+    [CapTransaction(AutoCommit = false)]
+    public virtual long AddWithTran(User user)
+    {
+    	_capBus.Publish("xxx.services.show.time", DateTime.Now);
+	return _userRepository.Insert(user);
+    }
 }
 
 ```
