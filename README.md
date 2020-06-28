@@ -1,6 +1,6 @@
 # SmartSql.CAP
 
-Support CAP extension for Smart.Sql
+Support CAP extension for SmartSql
 
 ## Getting Started
 

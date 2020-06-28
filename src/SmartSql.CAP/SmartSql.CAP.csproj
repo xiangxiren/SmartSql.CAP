@@ -2,10 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.0--preview002</Version>
-    <Authors>hx</Authors>
-    <Company>hxhx</Company>
-    <RepositoryUrl>https://github.com/Smart-Kit/SmartSql</RepositoryUrl>
+    <Version>1.0.0--preview001</Version>
+    <Authors>xiangxiren</Authors>
+    <Company>xiangxiren</Company>
+    <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
+    <Description>Support CAP extension for SmartSql</Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>CAP;SmartSql</PackageTags>
+    <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
