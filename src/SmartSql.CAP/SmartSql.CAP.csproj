@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.0--preview001</Version>
+    <Version>1.0.0-preview001</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
