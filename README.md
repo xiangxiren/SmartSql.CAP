@@ -20,7 +20,7 @@ public class UserService
 
     public UserService(IUserRepository userRepository, ICapPublisher capPublisher)
     {
-		_userRepository = userRepository;
+        _userRepository = userRepository;
         _capBus = capPublisher;
     }
 	
