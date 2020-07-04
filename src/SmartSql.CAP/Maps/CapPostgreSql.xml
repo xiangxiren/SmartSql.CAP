@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<SmartSqlMap Scope="Cap" xmlns="http://SmartSql.net/schemas/SmartSqlMap.xsd">
+
+  <Statements>
+
+    <Statement Id="InitializeTables">
+      CREATE SCHEMA IF NOT EXISTS "<Placeholder Property="schema" />";
+
+      CREATE TABLE IF NOT EXISTS <Placeholder Property="receivedTableName" />(
+      "Id" BIGINT PRIMARY KEY NOT NULL,
+      "Version" VARCHAR(20) NOT NULL,
+      "Name" VARCHAR(200) NOT NULL,
+      "Group" VARCHAR(200) NULL,
+      "Content" TEXT NULL,
+      "Retries" INT NOT NULL,
+      "Added" TIMESTAMP NOT NULL,
+      "ExpiresAt" TIMESTAMP NULL,
+      "StatusName" VARCHAR(50) NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS <Placeholder Property="publishedTableName" />(
+      "Id" BIGINT PRIMARY KEY NOT NULL,
+      "Version" VARCHAR(20) NOT NULL,
+      "Name" VARCHAR(200) NOT NULL,
+      "Content" TEXT NULL,
+      "Retries" INT NOT NULL,
+      "Added" TIMESTAMP NOT NULL,
+      "ExpiresAt" TIMESTAMP NULL,
+      "StatusName" VARCHAR(50) NOT NULL
+      );
+    </Statement>
+
+    <Statement Id="GetStatistics">
+      SELECT
+      (
+      SELECT COUNT("Id") FROM <Placeholder Property="publishedTableName" /> WHERE "StatusName" = N'Succeeded'
+      ) AS "PublishedSucceeded",
+      (
+      SELECT COUNT("Id") FROM {_recName} WHERE "StatusName" = N'Succeeded'
+      ) AS "ReceivedSucceeded",
+      (
+      SELECT COUNT("Id") FROM <Placeholder Property="publishedTableName" /> WHERE "StatusName" = N'Failed'
+      ) AS "PublishedFailed",
+      (
+      SELECT COUNT("Id") FROM <Placeholder Property="receivedTableName" /> WHERE "StatusName" = N'Failed'
+      ) AS "ReceivedFailed"
+    </Statement>
+
+    <Statement Id="GetTimelineStats">
+      WITH aggr AS (
+      SELECT to_char("Added",'yyyy-MM-dd-HH') AS "Key",
+      COUNT("Id") AS "Count"
+      FROM {tableName}
+      WHERE "StatusName" = @statusName
+      GROUP BY to_char("Added", 'yyyy-MM-dd-HH')
+      )
+      SELECT "Key","Count" FROM aggr WHERE "Key" >= @minKey AND "Key" &lt;= @maxKey
+    </Statement>
+
+    <Statement Id="QueryMessages" >
+      Select * From <Placeholder Property="tableName" />
+      <Where>
+        <IsNotEmpty Prepend="And" Property="statusName">
+          Lower("StatusName") = Lower(@statusName)
+        </IsNotEmpty>
+        <IsNotEmpty Prepend="And" Property="name">
+          Lower("Name") = Lower(@name)
+        </IsNotEmpty>
+        <IsNotEmpty Prepend="And" Property="group">
+          Lower("Group") = Lower(@group)
+        </IsNotEmpty>
+        <IsNotEmpty Prepend="And" Property="content">
+          "Content" ILike CONCAT('%',@content,'%')
+        </IsNotEmpty>
+      </Where>
+      ORDER BY "Added" DESC
+      OFFSET @offset LIMIT @limit
+    </Statement>
+
+    <Statement Id="GetNumberOfMessage">
+      SELECT COUNT("Id") FROM <Placeholder Property="tableName" />
+      WHERE "StatusName" = @statusName
+    </Statement>
+
+    <Statement Id="GetMessage">
+      SELECT "Id" AS "DbId", "Content", "Added", "ExpiresAt", "Retries"
+      FROM <Placeholder Property="tableName" />
+      WHERE "Id" = @id FOR UPDATE SKIP LOCKED
+    </Statement>
+
+    <Statement Id="ChangeMessageState">
+      UPDATE <Placeholder Property="tableName" />
+      SET "Retries" = @Retries, "ExpiresAt" = @ExpiresAt, "StatusName" = @StatusName
+      WHERE "Id" = @Id
+    </Statement>
+
+    <Statement Id="InsertPublishedMessage">
+      INSERT INTO <Placeholder Property="tableName" />
+      (
+      "Id",
+      "Version",
+      "Name",
+      "Content",
+      "Retries",
+      "Added",
+      "ExpiresAt",
+      "StatusName"
+      )
+      VALUES
+      (
+      @id,
+      @version,
+      @name,
+      @content,
+      @retries,
+      @added,
+      @expiresAt,
+      @statusName
+      )
+    </Statement>
+
+    <Statement Id="InsertReceivedMessage">
+      INSERT INTO <Placeholder Property="tableName" />
+      (
+      "Id",
+      "Version",
+      "Name",
+      "Group",
+      "Content",
+      "Retries",
+      "Added",
+      "ExpiresAt",
+      "StatusName"
+      )
+      VALUES
+      (
+      @id,
+      @version,
+      @name,
+      @group,
+      @content,
+      @retries,
+      @added,
+      @expiresAt,
+      @statusName
+      )
+    </Statement>
+
+    <Statement Id="DeleteExpires">
+      DELETE FROM <Placeholder Property="tableName" />
+      WHERE "ExpiresAt" &lt; @timeout AND "Id" IN (SELECT "Id" FROM <Placeholder Property="tableName" /> LIMIT @batchCount)
+    </Statement>
+
+    <Statement Id="GetMessagesOfNeedRetry">
+      SELECT "Id","Content","Retries","Added"
+      FROM <Placeholder Property="tableName" />
+      WHERE "Retries" &lt; @retries
+      AND "Version" = @version
+      AND "Added" &lt; @added
+      AND ("StatusName" = 'Failed' OR "StatusName" = 'Scheduled')
+      LIMIT 200
+    </Statement>
+
+  </Statements>
+
+</SmartSqlMap>

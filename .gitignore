@@ -6,3 +6,8 @@
 /src/SmartSql.CAP/obj
 /.vs/SmartSql.CAP/v16/.suo
 /src/SmartSql.CAP/bin/Release
+/src/SmartSql.Cap.MySql/obj
+/src/SmartSql.Cap.MySql/bin/Debug
+/.vs/SmartSql.CAP
+/samples/Sample.Kafka.MySql/obj
+/samples/Sample.Kafka.MySql/bin

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.1.0" />
+    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="3.1.0-preview-108719052" />
+    <PackageReference Include="DotNetCore.CAP.Kafka" Version="3.1.0-preview-108719052" />
+    <!-- <PackageReference Include="DotNetCore.CAP.MySql" Version="3.1.0-preview-108719052" /> -->
+    <PackageReference Include="MySqlConnector" Version="0.69.5" />
+    <PackageReference Include="SmartSql" Version="4.1.55" />
+    <PackageReference Include="SmartSql.DIExtension" Version="4.1.55" />
+    <PackageReference Include="SmartSql.DyRepository" Version="4.1.55" />
+    <PackageReference Include="SmartSql.Schema" Version="4.1.30" />
+    <PackageReference Include="SmartSql.ScriptTag" Version="4.1.55" />
+    <PackageReference Include="SmartSql.TypeHandler" Version="4.1.55" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SmartSql.CAP\SmartSql.CAP.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Maps\*.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SmartSqlMapConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
+</Project>

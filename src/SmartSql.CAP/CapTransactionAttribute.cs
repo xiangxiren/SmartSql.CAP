@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
+// Copyright (c) .NET Core Community. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
 using AspectCore.DynamicProxy;
 using DotNetCore.CAP;
 using Microsoft.Extensions.DependencyInjection;
+using SmartSql.CAP;
 using SmartSql.Exceptions;
 
 // ReSharper disable once CheckNamespace
@@ -35,14 +39,13 @@ namespace SmartSql.AOP
             var transcation = sessionStore.LocalSession?.Transaction;
             if (transcation != null)
             {
-                transcation.BeginCapTransaction(publisher, AutoCommit);
-
-                await next.Invoke(context); return;
+                throw new SmartSqlException(
+                    "SmartSqlMapper could not invoke BeginCapTransaction(). A CapTransaction is already existed.");
             }
 
             using (sessionStore)
             {
-                await sessionStore.Open().TransactionWrapAsync(Level, publisher, async () =>
+                await sessionStore.Open().CapTransactionWrapAsync(Level, publisher, async () =>
                 {
                     await next.Invoke(context);
                 }, AutoCommit);

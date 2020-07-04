@@ -1,66 +1,134 @@
-﻿using System;
+﻿// Copyright (c) .NET Core Community. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+using System;
 using System.Data;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
 using Microsoft.Extensions.DependencyInjection;
 using SmartSql.DbSession;
+using SmartSql.Exceptions;
 
-// ReSharper disable once CheckNamespace
-namespace SmartSql.AOP
+namespace SmartSql.CAP
 {
     public static class DbTransactionExtensions
     {
         /// <summary>
         /// Start the CAP transaction
         /// </summary>
-        /// <param name="dbTransaction">The <see cref="IDbTransaction" />.</param>
+        /// <param name="sqlMapper">The <see cref="ISqlMapper" />.</param>
         /// <param name="publisher">The <see cref="ICapPublisher" />.</param>
         /// <param name="autoCommit">Whether the transaction is automatically committed when the message is published</param>
         /// <returns>The <see cref="ICapTransaction" /> object.</returns>
-        public static IDbTransaction BeginCapTransaction(this IDbTransaction dbTransaction,
+        public static ICapTransaction BeginCapTransaction(this ISqlMapper sqlMapper, ICapPublisher publisher,
+            bool autoCommit = false)
+        {
+            if (sqlMapper.SessionStore.LocalSession != null)
+            {
+                throw new SmartSqlException(
+                    "SmartSqlMapper could not invoke BeginCapTransaction(). A LocalSession is already existed.");
+            }
+
+            return sqlMapper.SessionStore.Open().BeginCapTransaction(publisher, autoCommit);
+        }
+
+        /// <summary>
+        /// Start the CAP transaction
+        /// </summary>
+        /// <param name="sqlMapper">The <see cref="ISqlMapper" />.</param>
+        /// <param name="isolationLevel">The <see cref="IsolationLevel" />.</param>
+        /// <param name="publisher">The <see cref="ICapPublisher" />.</param>
+        /// <param name="autoCommit">Whether the transaction is automatically committed when the message is published</param>
+        /// <returns>The <see cref="ICapTransaction" /> object.</returns>
+        public static ICapTransaction BeginCapTransaction(this ISqlMapper sqlMapper, IsolationLevel isolationLevel,
             ICapPublisher publisher, bool autoCommit = false)
         {
+            if (sqlMapper.SessionStore.LocalSession != null)
+            {
+                throw new SmartSqlException(
+                    "SmartSqlMapper could not invoke BeginCapTransaction(). A LocalSession is already existed.");
+            }
+
+            return sqlMapper.SessionStore.Open().BeginCapTransaction(isolationLevel, publisher, autoCommit);
+        }
+
+        /// <summary>
+        /// Start the CAP transaction
+        /// </summary>
+        /// <param name="dbSession">The <see cref="IDbSession" />.</param>
+        /// <param name="publisher">The <see cref="ICapPublisher" />.</param>
+        /// <param name="autoCommit">Whether the transaction is automatically committed when the message is published</param>
+        /// <returns>The <see cref="ICapTransaction" /> object.</returns>
+        public static ICapTransaction BeginCapTransaction(this IDbSession dbSession, ICapPublisher publisher,
+            bool autoCommit = false)
+        {
+            dbSession.BeginTransaction();
             if (publisher.Transaction.Value == null)
             {
                 var capTransaction = publisher.ServiceProvider.GetService<ICapTransaction>();
 
-                capTransaction.DbTransaction = dbTransaction;
+                capTransaction.DbTransaction = dbSession;
                 capTransaction.AutoCommit = autoCommit;
 
                 publisher.Transaction.Value = capTransaction;
             }
 
-            return (IDbTransaction)publisher.Transaction.Value.DbTransaction;
+            return publisher.Transaction.Value;
         }
 
-        public static async Task TransactionWrapAsync(this IDbSession dbSession, ICapPublisher publisher,
+        /// <summary>
+        /// Start the CAP transaction
+        /// </summary>
+        /// <param name="dbSession">The <see cref="IDbSession" />.</param>
+        /// <param name="isolationLevel">The <see cref="IsolationLevel" />.</param>
+        /// <param name="publisher">The <see cref="ICapPublisher" />.</param>
+        /// <param name="autoCommit">Whether the transaction is automatically committed when the message is published</param>
+        /// <returns>The <see cref="ICapTransaction" /> object.</returns>
+        public static ICapTransaction BeginCapTransaction(this IDbSession dbSession, IsolationLevel isolationLevel,
+            ICapPublisher publisher, bool autoCommit = false)
+        {
+            dbSession.BeginTransaction(isolationLevel);
+            if (publisher.Transaction.Value == null)
+            {
+                var capTransaction = publisher.ServiceProvider.GetService<ICapTransaction>();
+
+                capTransaction.DbTransaction = dbSession;
+                capTransaction.AutoCommit = autoCommit;
+
+                publisher.Transaction.Value = capTransaction;
+            }
+
+            return publisher.Transaction.Value;
+        }
+
+        public static async Task CapTransactionWrapAsync(this IDbSession dbSession, ICapPublisher publisher,
             Func<Task> handler, bool autoCommit = false)
         {
-            dbSession.BeginTransaction().BeginCapTransaction(publisher, autoCommit);
+            var trans = dbSession.BeginCapTransaction(publisher, autoCommit);
             try
             {
                 await handler();
-                dbSession.CommitTransaction();
+                await trans.CommitAsync();
             }
             catch (Exception)
             {
-                dbSession.RollbackTransaction();
+                await trans.RollbackAsync();
                 throw;
             }
         }
 
-        public static async Task TransactionWrapAsync(this IDbSession dbSession, IsolationLevel isolationLevel,
+        public static async Task CapTransactionWrapAsync(this IDbSession dbSession, IsolationLevel isolationLevel,
             ICapPublisher publisher, Func<Task> handler, bool autoCommit = false)
         {
-            dbSession.BeginTransaction(isolationLevel).BeginCapTransaction(publisher, autoCommit);
+            var trans = dbSession.BeginCapTransaction(isolationLevel, publisher, autoCommit);
             try
             {
                 await handler();
-                dbSession.CommitTransaction();
+                await trans.CommitAsync();
             }
             catch (Exception)
             {
-                dbSession.RollbackTransaction();
+                await trans.RollbackAsync();
                 throw;
             }
         }

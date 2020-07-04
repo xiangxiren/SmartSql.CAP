@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SmartSqlMapConfig xmlns="http://SmartSql.net/schemas/SmartSqlMapConfig.xsd">
+  <Settings IsCacheEnabled="true" EnablePropertyChangedTrack="false"/>
+  <Properties>
+    <Property Name="ScriptBuilder" Value="SmartSql.ScriptTag.ScriptBuilder,SmartSql.ScriptTag"/>
+    <Property Name="CryptoTypeHandler" Value="SmartSql.TypeHandler.CryptoTypeHandler,SmartSql.TypeHandler"/>
+    <Property Name="JsonTypeHandler" Value="SmartSql.TypeHandler.JsonTypeHandler`1,SmartSql.TypeHandler"/>
+    <Property Name="NamedJsonTypeHandler" Value="SmartSql.TypeHandler.JsonTypeHandler,SmartSql.TypeHandler"/>
+  </Properties>
+  <AutoConverters>
+    <AutoConverter Name="PascalConverter">
+      <Tokenizer Name="Default">
+        <Properties>
+          <Property Name="IgnorePrefix" Value="" />
+          <Property Name="Delimiter" Value="_" />
+          <Property Name="UppercaseSplit" Value="false" />
+        </Properties>
+      </Tokenizer>
+      <Converter Name="Pascal"/>
+    </AutoConverter>
+  </AutoConverters>
+  <Database>
+    <DbProvider Name="MySqlConnector"/>
+    <Write Name="DB" ConnectionString="${ConnectionString}"/>
+  </Database>
+  <TypeHandlers>
+    <TypeHandler Name="Json" Type="${NamedJsonTypeHandler}">
+      <Properties>
+        <Property Name="DateFormat" Value="yyyy-MM-dd mm:ss"/>
+        <Property Name="NamingStrategy" Value="Camel"/>
+      </Properties>
+    </TypeHandler>
+    <TypeHandler Name="DES" Type="${CryptoTypeHandler}">
+      <Properties>
+        <Property Name="Algorithm" Value="DES"/>
+        <Property Name="Key" Value="qxMfZpmQ1Rk="/>
+        <Property Name="IV" Value="XaX73vwx694="/>
+      </Properties>
+    </TypeHandler>
+    <TypeHandler Name="AES" Type="${CryptoTypeHandler}">
+      <Properties>
+        <Property Name="Algorithm" Value="AES"/>
+        <Property Name="Key" Value="awVFRYPeTTrA9T7OOzaAFUvu8I/ZyYjAtIzEjCmzzYw="/>
+        <Property Name="IV" Value="7cFxoI3/k1wxN9P6rEyR/Q=="/>
+      </Properties>
+    </TypeHandler>
+  </TypeHandlers>
+  <TagBuilders>
+    <TagBuilder Name="Script" Type="${ScriptBuilder}"/>
+  </TagBuilders>
+  <SmartSqlMaps>
+    <SmartSqlMap Path="Maps" Type="Directory"/>
+    <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" ></SmartSqlMap>
+  </SmartSqlMaps>
+</SmartSqlMapConfig>

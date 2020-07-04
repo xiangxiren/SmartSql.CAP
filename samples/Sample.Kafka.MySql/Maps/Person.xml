@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<SmartSqlMap Scope="Person" xmlns="http://SmartSql.net/schemas/SmartSqlMap.xsd">
+
+  <Statements>
+    <Statement Id="Insert">
+      INSERT INTO person
+      (
+      id,
+      name
+      )
+      VALUES
+      (
+      ?Id,
+      ?Name
+      )
+    </Statement>
+
+    <!--获取表映射实体-->
+    <Statement Id="GetEntity" AutoConverter="PascalConverter">
+      Select T.id, T.name
+      From person As T
+      <Where Min="1">
+        <IsNotEmpty Prepend="And" Property="Id">
+          T.id= ?Id
+        </IsNotEmpty>
+      </Where>
+      Limit 1
+    </Statement>
+  </Statements>
+
+</SmartSqlMap>

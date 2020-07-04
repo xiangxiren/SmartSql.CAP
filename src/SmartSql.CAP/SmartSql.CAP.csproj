@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.0-preview001</Version>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <Version>1.0.0-preview002</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -11,6 +11,14 @@
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Maps\*" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.1.0" />
