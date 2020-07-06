@@ -51,6 +51,6 @@
   </TagBuilders>
   <SmartSqlMaps>
     <SmartSqlMap Path="Maps" Type="Directory"/>
-    <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" ></SmartSqlMap>
+    <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" />
   </SmartSqlMaps>
 </SmartSqlMapConfig>

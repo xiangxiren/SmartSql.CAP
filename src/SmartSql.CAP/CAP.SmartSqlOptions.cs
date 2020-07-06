@@ -16,10 +16,5 @@ namespace SmartSql.CAP
         /// Data version
         /// </summary>
         internal string Version { get; set; } = "v1";
-
-        /// <summary>
-        /// Gets or sets the database's connection string that will be used to store database entities.
-        /// </summary>
-        public string ConnectionString { get; set; }
     }
 }
