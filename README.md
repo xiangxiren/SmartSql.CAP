@@ -10,7 +10,6 @@ You can run the following command to install the SmartSql.CAP in your project.
 
 ```
 PM> Install-Package SmartSql.CAP
-PM> Install-Package SmartSql.Cap.MySql
 ```
 
 ### Configuration
