@@ -1,5 +1,4 @@
-﻿
-using SmartSql.DIExtension;
+﻿using SmartSql.DIExtension;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -8,7 +7,8 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static SmartSqlDIBuilder AddCapRepository(this SmartSqlDIBuilder builder)
         {
-            builder.AddRepositoryFromAssembly(options => options.AssemblyString = "SmartSql.CAP");
+            builder.AddRepositoryFromAssembly(options =>
+                options.AssemblyString = typeof(CapRepositoryExtensions).Assembly.GetName().Name);
 
             return builder;
         }

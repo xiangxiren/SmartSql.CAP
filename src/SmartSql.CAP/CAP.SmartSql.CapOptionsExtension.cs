@@ -1,13 +1,11 @@
-﻿// Copyright (c) .NET Core Community. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
-
-using System;
-using DotNetCore.CAP;
+﻿using System;
 using DotNetCore.CAP.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SmartSql.CAP;
 
-namespace SmartSql.CAP
+// ReSharper disable once CheckNamespace
+namespace DotNetCore.CAP
 {
     internal class MySqlCapOptionsExtension : ICapOptionsExtension
     {
@@ -26,7 +24,6 @@ namespace SmartSql.CAP
             services.TryAddSingleton<IStorageInitializer, SmartSqlStorageInitializer>();
             services.AddTransient<ICapTransaction, SmartSqlCapTransaction>();
 
-            //Add SmartSqlOptions
             services.Configure(_configure);
         } 
     }

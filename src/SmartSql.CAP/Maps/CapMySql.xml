@@ -4,7 +4,7 @@
 
   <Statements>
 
-    <Statement Id="InitializeTables">
+    <Statement Id="InitializeTables" SourceChoice="Write">
       CREATE TABLE IF NOT EXISTS `<Placeholder Property="receivedTableName" />`
       (
       `Id` bigint NOT NULL,

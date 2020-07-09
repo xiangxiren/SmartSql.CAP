@@ -4,7 +4,7 @@
 
   <Statements>
 
-    <Statement Id="InitializeTables">
+    <Statement Id="InitializeTables" SourceChoice="Write">
       IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = '<Placeholder Property="schema" />')
       BEGIN
       EXEC('CREATE SCHEMA [<Placeholder Property="schema" />]')
