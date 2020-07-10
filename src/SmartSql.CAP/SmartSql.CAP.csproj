@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.0.0-preview004</Version>
+    <Version>1.0.0-preview005</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -10,11 +10,20 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
-    <PackageReleaseNotes>Add attributes in SmartSqlOptions to configure whether to create a CAP-related table structure when the program starts. And upgrade Nuget packages related to CAP.</PackageReleaseNotes>
+    <PackageReleaseNotes>Increase the generation of XML documents</PackageReleaseNotes>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>0</WarningLevel>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>bin\Debug\SmartSql.CAP.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>bin\Release\SmartSql.CAP.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
