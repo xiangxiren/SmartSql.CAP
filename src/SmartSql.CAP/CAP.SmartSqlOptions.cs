@@ -14,5 +14,10 @@ namespace DotNetCore.CAP
         /// Data version
         /// </summary>
         internal string Version { get; set; } = "v1";
+
+        /// <summary>
+        /// Get or set whether to execute SQL to create a table. Default is true
+        /// </summary>
+        public bool InitializeTable { get; set; } = true;
     }
 }

@@ -40,6 +40,12 @@ namespace SmartSql.CAP
                 return;
             }
 
+            if (!_options.Value.InitializeTable)
+            {
+                _logger.LogDebug("The initial value is false, it will not execute SQL to create the table structure.");
+                return;
+            }
+
             await _capRepository.InitializeTablesAsync(_options.Value.Schema, GetReceivedTableName(), GetPublishedTableName());
             _logger.LogDebug("Ensuring all create database tables script are applied.");
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using DotNetCore.CAP;
-using SmartSql.CAP;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection

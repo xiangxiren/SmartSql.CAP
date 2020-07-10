@@ -30,7 +30,7 @@ namespace Sample.Kafka.MySql
 
             services.AddCap(options =>
             {
-                options.UseSmartSql();
+                options.UseSmartSql(smartSqlOptions => { smartSqlOptions.InitializeTable = false; });
                 options.UseKafka("127.0.0.1:9092");
                 options.UseDashboard();
             });

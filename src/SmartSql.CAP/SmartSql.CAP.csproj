@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.0.0-preview003</Version>
+    <Version>1.0.0-preview004</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -10,7 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>Add attributes in SmartSqlOptions to configure whether to create a CAP-related table structure when the program starts. And upgrade Nuget packages related to CAP.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.1.0" />
-    <PackageReference Include="DotNetCore.CAP" Version="3.1.0-preview-110973935" />
+    <PackageReference Include="DotNetCore.CAP" Version="3.1.0-preview-111117527" />
      <PackageReference Include="SmartSql.DIExtension" Version="4.1.55" /> 
   </ItemGroup>
 
