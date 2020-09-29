@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -10,7 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
-    <PackageReleaseNotes>Release 1.0.0 official version</PackageReleaseNotes>
+    <PackageReleaseNotes>update storage</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -32,8 +32,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.1.0" />
-    <PackageReference Include="DotNetCore.CAP" Version="3.1.0" />
-     <PackageReference Include="SmartSql.DIExtension" Version="4.1.56" /> 
+    <PackageReference Include="DotNetCore.CAP" Version="3.1.1" />
+    <PackageReference Include="SmartSql.DIExtension" Version="4.1.56" />
   </ItemGroup>
 
 </Project>

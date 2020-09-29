@@ -16,6 +16,7 @@ namespace SmartSql.CAP
     {
         private readonly IOptions<CapOptions> _capOptions;
         private readonly IStorageInitializer _initializer;
+        private readonly ISerializer _serializer;
         private readonly ICapRepository _capRepository;
         private readonly string _pubName;
         private readonly string _recName;
@@ -23,10 +24,12 @@ namespace SmartSql.CAP
         public SmartSqlDataStorage(
             IOptions<CapOptions> capOptions,
             IStorageInitializer initializer,
+            ISerializer serializer,
             ICapRepository capRepository)
         {
             _capOptions = capOptions;
             _initializer = initializer;
+            _serializer = serializer;
             _capRepository = capRepository;
             _pubName = initializer.GetPublishedTableName();
             _recName = initializer.GetReceivedTableName();
@@ -34,11 +37,11 @@ namespace SmartSql.CAP
 
         public async Task ChangePublishStateAsync(MediumMessage message, StatusName state) =>
             await _capRepository.ChangeMessageStateAsync(_pubName, message.DbId, message.Retries, message.ExpiresAt,
-                state.ToString("G"));
+                state.ToString("G"), _serializer.Serialize(message.Origin));
 
         public async Task ChangeReceiveStateAsync(MediumMessage message, StatusName state) =>
             await _capRepository.ChangeMessageStateAsync(_recName, message.DbId, message.Retries, message.ExpiresAt,
-                state.ToString("G"));
+                state.ToString("G"), _serializer.Serialize(message.Origin));
 
         public MediumMessage StoreMessage(string name, Message content, object dbTransaction = null)
         {
@@ -46,7 +49,7 @@ namespace SmartSql.CAP
             {
                 DbId = content.GetId(),
                 Origin = content,
-                Content = StringSerializer.Serialize(content),
+                Content = _serializer.Serialize(content),
                 Added = DateTime.Now,
                 ExpiresAt = null,
                 Retries = 0
@@ -77,7 +80,7 @@ namespace SmartSql.CAP
             };
 
             _capRepository.InsertReceivedMessage(_recName, mdMessage.DbId, _capOptions.Value.Version, name, group,
-                StringSerializer.Serialize(mdMessage.Origin), mdMessage.Retries, mdMessage.Added, mdMessage.ExpiresAt,
+                _serializer.Serialize(mdMessage.Origin), mdMessage.Retries, mdMessage.Added, mdMessage.ExpiresAt,
                 nameof(StatusName.Failed));
 
             return mdMessage;
@@ -105,7 +108,7 @@ namespace SmartSql.CAP
                 messages.Add(new MediumMessage
                 {
                     DbId = messagesOfNeedRetry.Id.ToString(),
-                    Origin = StringSerializer.DeSerialize(messagesOfNeedRetry.Content),
+                    Origin = _serializer.Deserialize(messagesOfNeedRetry.Content),
                     Retries = messagesOfNeedRetry.Retries,
                     Added = messagesOfNeedRetry.Added
                 });

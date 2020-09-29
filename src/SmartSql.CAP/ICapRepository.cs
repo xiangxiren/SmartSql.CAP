@@ -22,7 +22,7 @@ namespace SmartSql.CAP
 
         Task<MediumMessage> GetMessageAsync(string tableName, long id);
 
-        Task ChangeMessageStateAsync(string tableName, string id, int retries, DateTime? expiresAt, string statusName);
+        Task ChangeMessageStateAsync(string tableName, string id, int retries, DateTime? expiresAt, string statusName, string content);
 
         void InsertPublishedMessage(string tableName, string id, string version, string name, string content,
             int retries, DateTime added, DateTime? expiresAt, string statusName);

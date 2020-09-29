@@ -97,7 +97,7 @@
 
     <Statement Id="ChangeMessageState">
       UPDATE `<Placeholder Property="tableName" />`
-      SET `Retries` = ?retries,`ExpiresAt` = ?expiresAt,`StatusName`= ?statusName
+      SET `Retries`=?retries, `ExpiresAt`=?expiresAt, `StatusName`=?statusName, `Content`=?content
       WHERE `Id` = ?id
     </Statement>
 
