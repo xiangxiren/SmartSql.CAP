@@ -22,7 +22,6 @@ namespace DotNetCore.CAP
             services.AddSingleton<IDataStorage, SmartSqlDataStorage>();
             
             services.TryAddSingleton<IStorageInitializer, SmartSqlStorageInitializer>();
-            services.AddTransient<ICapTransaction, SmartSqlCapTransaction>();
 
             services.Configure(_configure);
         } 

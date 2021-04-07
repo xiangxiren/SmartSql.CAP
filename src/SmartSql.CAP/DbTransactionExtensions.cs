@@ -62,7 +62,7 @@ namespace SmartSql.CAP
             dbSession.BeginTransaction();
             if (publisher.Transaction.Value == null)
             {
-                var capTransaction = publisher.ServiceProvider.GetService<ICapTransaction>();
+                var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
 
                 capTransaction.DbTransaction = dbSession;
                 capTransaction.AutoCommit = autoCommit;
@@ -87,7 +87,7 @@ namespace SmartSql.CAP
             dbSession.BeginTransaction(isolationLevel);
             if (publisher.Transaction.Value == null)
             {
-                var capTransaction = publisher.ServiceProvider.GetService<ICapTransaction>();
+                var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
 
                 capTransaction.DbTransaction = dbSession;
                 capTransaction.AutoCommit = autoCommit;
