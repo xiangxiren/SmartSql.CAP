@@ -2,19 +2,21 @@
 using System.Threading.Tasks;
 using DotNetCore.CAP;
 using Microsoft.AspNetCore.Mvc;
-using Sample.Kafka.MySql.Domain;
-using Sample.Kafka.MySql.Service;
+using Sample.RabbitMQ.MySql.Domain;
+using Sample.RabbitMQ.MySql.Service;
 
-namespace Sample.Kafka.MySql.Controllers
+namespace Sample.RabbitMQ.MySql.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class PersonController : ControllerBase
     {
+        private readonly ICapPublisher _capBus;
         private readonly PersonService _service;
 
-        public PersonController(PersonService service)
+        public PersonController(ICapPublisher capBus, PersonService service)
         {
+            _capBus = capBus;
             _service = service;
         }
 
@@ -25,6 +27,18 @@ namespace Sample.Kafka.MySql.Controllers
         [HttpGet("~/mt")]
         public async Task MtAdd() =>
             await _service.MtAddAsync();
+
+        [Route("~/without/transaction")]
+        public async Task<IActionResult> WithoutTransaction()
+        {
+            await _capBus.PublishAsync("sample.kafka.mysql", new Person()
+            {
+                Id = 123,
+                Name = "Bar"
+            });
+
+            return Ok();
+        }
 
         [NonAction]
         [CapSubscribe("sample.kafka.mysql")]

@@ -75,10 +75,7 @@
       SELECT [Key], [Count] FROM aggr WITH (NOLOCK) where [Key] >= @minKey and [Key] &lt;= @maxKey;
     </Statement>
 
-    <Statement Id="QueryMessages" >
-      SELECT * FROM
-      (
-      SELECT T.*, ROW_NUMBER() OVER(ORDER BY T.Added DESC) AS row_number From <Placeholder Property="TableName" /> AS T
+    <Statement Id="QueryParams">
       <Where>
         <IsNotEmpty Prepend="And" Property="StatusName">
           StatusName = @statusName
@@ -93,8 +90,21 @@
           Content LIKE '%' + @content + '%'
         </IsNotEmpty>
       </Where>
+    </Statement>
+
+    <Statement Id="QueryMessages" >
+      SELECT * FROM
+      (
+      SELECT T.*, ROW_NUMBER() OVER(ORDER BY T.Added DESC) AS row_number From <Placeholder Property="TableName" /> AS T
+      <Include RefId="QueryParams" />
       ) AS tbl
       WHERE tbl.row_number BETWEEN @offset and @offset + @limit
+    </Statement>
+
+    <!--获取记录数-->
+    <Statement Id="GetRecord">
+      Select Count(1) From <Placeholder Property="TableName" />
+      <Include RefId="QueryParams" />
     </Statement>
 
     <Statement Id="GetNumberOfMessage">

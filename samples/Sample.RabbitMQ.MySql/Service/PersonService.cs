@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
-using Sample.Kafka.MySql.Domain;
-using Sample.Kafka.MySql.Repository;
+using Sample.RabbitMQ.MySql.Domain;
+using Sample.RabbitMQ.MySql.Repository;
 using SmartSql.AOP;
 using SmartSql.CAP;
 
-namespace Sample.Kafka.MySql.Service
+namespace Sample.RabbitMQ.MySql.Service
 {
     public class PersonService
     {

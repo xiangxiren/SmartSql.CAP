@@ -58,8 +58,7 @@
       SELECT "Key","Count" FROM aggr WHERE "Key" >= @minKey AND "Key" &lt;= @maxKey
     </Statement>
 
-    <Statement Id="QueryMessages" >
-      Select * From <Placeholder Property="tableName" />
+    <Statement Id="QueryParams">
       <Where>
         <IsNotEmpty Prepend="And" Property="statusName">
           Lower("StatusName") = Lower(@statusName)
@@ -74,8 +73,19 @@
           "Content" ILike CONCAT('%',@content,'%')
         </IsNotEmpty>
       </Where>
+    </Statement>
+
+    <Statement Id="QueryMessages" >
+      Select * From <Placeholder Property="tableName" />
+      <Include RefId="QueryParams" />
       ORDER BY "Added" DESC
       OFFSET @offset LIMIT @limit
+    </Statement>
+
+    <!--获取记录数-->
+    <Statement Id="GetRecord">
+      Select Count(1) From <Placeholder Property="tableName" />
+      <Include RefId="QueryParams" />
     </Statement>
 
     <Statement Id="GetNumberOfMessage">

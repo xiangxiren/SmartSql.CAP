@@ -18,6 +18,8 @@ namespace SmartSql.CAP
         List<MessageDto> QueryMessages(string tableName, string name, string group, string content, string statusName,
             int limit, int offset);
 
+        long GetRecord(string tableName, string name, string group, string content, string statusName);
+
         int GetNumberOfMessage(string tableName, string statusName);
 
         Task<MediumMessage> GetMessageAsync(string tableName, long id);

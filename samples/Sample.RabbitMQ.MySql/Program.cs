@@ -2,7 +2,7 @@ using AspectCore.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Sample.Kafka.MySql
+namespace Sample.RabbitMQ.MySql
 {
     public class Program
     {

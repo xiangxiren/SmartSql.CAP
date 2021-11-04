@@ -1,8 +1,8 @@
-﻿using Sample.Kafka.MySql.Domain;
+﻿using Sample.RabbitMQ.MySql.Domain;
 using SmartSql;
 using SmartSql.DyRepository;
 
-namespace Sample.Kafka.MySql.Repository
+namespace Sample.RabbitMQ.MySql.Repository
 {
     public interface IPersonRepository : IInsertAsync<Person>, IGetEntityAsync<Person, long>
     {

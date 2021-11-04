@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:52382",
+      "applicationUrl": "http://localhost:52381",
       "sslPort": 0
     }
   },
@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Sample.Kafka.MySql": {
+    "Sample.RabbitMQ.MySql": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

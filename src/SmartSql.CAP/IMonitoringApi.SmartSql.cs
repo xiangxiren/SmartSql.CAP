@@ -22,8 +22,33 @@ namespace SmartSql.CAP
             _recName = initializer.GetReceivedTableName();
         }
 
+        public async Task<MediumMessage> GetPublishedMessageAsync(long id) =>
+            await _capRepository.GetMessageAsync(_pubName, id);
+
+        public async Task<MediumMessage> GetReceivedMessageAsync(long id) =>
+            await _capRepository.GetMessageAsync(_recName, id);
+
         public StatisticsDto GetStatistics() =>
             _capRepository.GetStatistics(_recName, _pubName);
+
+        public PagedQueryResult<MessageDto> Messages(MessageQueryDto queryDto)
+        {
+            var tableName = queryDto.MessageType == MessageType.Publish ? _pubName : _recName;
+
+            var list = _capRepository.QueryMessages(tableName, queryDto.Name, queryDto.Group, queryDto.Content,
+                queryDto.StatusName, queryDto.PageSize, queryDto.CurrentPage * queryDto.PageSize);
+
+            var count = _capRepository.GetRecord(tableName, queryDto.Name, queryDto.Group, queryDto.Content,
+                queryDto.StatusName);
+
+            return new PagedQueryResult<MessageDto>
+            {
+                Items = list,
+                PageIndex = queryDto.CurrentPage,
+                PageSize = queryDto.PageSize,
+                Totals = count
+            };
+        }
 
         public IDictionary<DateTime, int> HourlyFailedJobs(MessageType type)
         {
@@ -35,14 +60,6 @@ namespace SmartSql.CAP
         {
             var tableName = type == MessageType.Publish ? _pubName : _recName;
             return GetHourlyTimelineStats(tableName, nameof(StatusName.Succeeded));
-        }
-
-        public IList<MessageDto> Messages(MessageQueryDto queryDto)
-        {
-            var tableName = queryDto.MessageType == MessageType.Publish ? _pubName : _recName;
-
-            return _capRepository.QueryMessages(tableName, queryDto.Name, queryDto.Group, queryDto.Content,
-                queryDto.StatusName, queryDto.PageSize, queryDto.CurrentPage * queryDto.PageSize);
         }
 
         public int PublishedFailedCount() =>
@@ -98,11 +115,5 @@ namespace SmartSql.CAP
 
             return result;
         }
-
-        public async Task<MediumMessage> GetPublishedMessageAsync(long id) =>
-            await _capRepository.GetMessageAsync(_pubName, id);
-
-        public async Task<MediumMessage> GetReceivedMessageAsync(long id) =>
-            await _capRepository.GetMessageAsync(_recName, id);
     }
 }

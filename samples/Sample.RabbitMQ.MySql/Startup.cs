@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SmartSql;
 
-namespace Sample.Kafka.MySql
+namespace Sample.RabbitMQ.MySql
 {
     public class Startup
     {
@@ -25,20 +25,27 @@ namespace Sample.Kafka.MySql
 
             services
                 .AddSmartSql((provider, builder) => { builder.UseProperties(Configuration); })
-                .AddRepositoryFromAssembly(options => { options.AssemblyString = "Sample.Kafka.MySql"; })
+                .AddRepositoryFromAssembly(options => { options.AssemblyString = "Sample.RabbitMQ.MySql"; })
                 .AddCapRepository();
 
             services.AddCap(options =>
             {
                 options.UseSmartSql(smartSqlOptions => { smartSqlOptions.InitializeTable = false; });
-                options.UseKafka("127.0.0.1:9092");
+                options.UseRabbitMQ(option =>
+                {
+                    option.HostName = Configuration["RabbitMQConfig:HostName"];
+                    option.Port = Configuration.GetValue<int>("RabbitMQConfig:Port");
+                    option.VirtualHost = Configuration["RabbitMQConfig:VirtualHost"];
+                    option.UserName = Configuration["RabbitMQConfig:UserName"];
+                    option.Password = Configuration["RabbitMQConfig:Password"];
+                });
                 options.UseDashboard();
             });
 
-            var assembly = Assembly.Load("Sample.Kafka.MySql");
+            var assembly = Assembly.Load("Sample.RabbitMQ.MySql");
             var allTypes = assembly.GetTypes();
             foreach (var type in allTypes.Where(t =>
-                !string.IsNullOrEmpty(t.FullName) && t.FullName.Contains("Sample.Kafka.MySql.Service")))
+                !string.IsNullOrEmpty(t.FullName) && t.FullName.Contains("Sample.RabbitMQ.MySql.Service")))
             {
                 services.AddSingleton(type);
             }

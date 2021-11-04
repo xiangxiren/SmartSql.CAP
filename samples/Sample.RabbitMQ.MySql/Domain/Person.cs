@@ -1,4 +1,4 @@
-﻿namespace Sample.Kafka.MySql.Domain
+﻿namespace Sample.RabbitMQ.MySql.Domain
 {
     public class Person
     {
