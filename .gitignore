@@ -9,5 +9,5 @@
 /src/SmartSql.Cap.MySql/obj
 /src/SmartSql.Cap.MySql/bin/Debug
 /.vs/SmartSql.CAP
-/samples/Sample.Kafka.MySql/obj
-/samples/Sample.Kafka.MySql/bin
+/samples/Sample.RabbitMQ.MySql/bin/Debug/net5.0
+/samples/Sample.RabbitMQ.MySql/obj

@@ -24,13 +24,18 @@ namespace Sample.RabbitMQ.MySql
             services.AddControllers();
 
             services
-                .AddSmartSql((provider, builder) => { builder.UseProperties(Configuration); })
+                .AddSmartSql((_, builder) => { builder.UseProperties(Configuration); })
                 .AddRepositoryFromAssembly(options => { options.AssemblyString = "Sample.RabbitMQ.MySql"; })
                 .AddCapRepository();
 
             services.AddCap(options =>
             {
-                options.UseSmartSql(smartSqlOptions => { smartSqlOptions.InitializeTable = false; });
+                options.UseSmartSql(x =>
+                {
+                    x.Schema = "cap";
+                    x.Version = "v1";
+                    x.InitializeTable = true;
+                });
                 options.UseRabbitMQ(option =>
                 {
                     option.HostName = Configuration["RabbitMQConfig:HostName"];

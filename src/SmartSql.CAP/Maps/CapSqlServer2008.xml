@@ -68,7 +68,7 @@
       WITH aggr AS (
       SELECT REPLACE(CONVERT(VARCHAR, Added, 111), '/','-') + '-' + CONVERT(VARCHAR, DATEPART(hh, Added)) AS [Key],
       COUNT(Id) [Count]
-      FROM  <Placeholder Property="TableName" />
+      FROM  <Placeholder Property="tableName" />
       WHERE StatusName = @statusName
       GROUP BY REPLACE(CONVERT(VARCHAR, Added, 111), '/','-') + '-' + CONVERT(VARCHAR, DATEPART(hh, Added))
       )
@@ -77,16 +77,16 @@
 
     <Statement Id="QueryParams">
       <Where>
-        <IsNotEmpty Prepend="And" Property="StatusName">
+        <IsNotEmpty Prepend="And" Property="statusName">
           StatusName = @statusName
         </IsNotEmpty>
-        <IsNotEmpty Prepend="And" Property="Name">
+        <IsNotEmpty Prepend="And" Property="name">
           Name = @name
         </IsNotEmpty>
-        <IsNotEmpty Prepend="And" Property="Group">
+        <IsNotEmpty Prepend="And" Property="group">
           Group = @group
         </IsNotEmpty>
-        <IsNotEmpty Prepend="And" Property="Content">
+        <IsNotEmpty Prepend="And" Property="content">
           Content LIKE '%' + @content + '%'
         </IsNotEmpty>
       </Where>
@@ -95,7 +95,7 @@
     <Statement Id="QueryMessages" >
       SELECT * FROM
       (
-      SELECT T.*, ROW_NUMBER() OVER(ORDER BY T.Added DESC) AS row_number From <Placeholder Property="TableName" /> AS T
+      SELECT T.*, ROW_NUMBER() OVER(ORDER BY T.Added DESC) AS row_number From <Placeholder Property="tableName" /> AS T
       <Include RefId="QueryParams" />
       ) AS tbl
       WHERE tbl.row_number BETWEEN @offset and @offset + @limit
@@ -103,29 +103,29 @@
 
     <!--获取记录数-->
     <Statement Id="GetRecord">
-      Select Count(1) From <Placeholder Property="TableName" />
+      Select Count(1) From <Placeholder Property="tableName" />
       <Include RefId="QueryParams" />
     </Statement>
 
     <Statement Id="GetNumberOfMessage">
-      SELECT COUNT(Id) FROM <Placeholder Property="TableName" />
+      SELECT COUNT(Id) FROM <Placeholder Property="tableName" />
       WHERE StatusName = @statusName
     </Statement>
 
     <Statement Id="GetMessage">
       SELECT Id AS DbId, Content, Added, ExpiresAt, Retries
-      FROM <Placeholder Property="TableName" />
+      FROM <Placeholder Property="tableName" />
       WHERE Id = @id
     </Statement>
 
     <Statement Id="ChangeMessageState">
-      UPDATE <Placeholder Property="TableName" />
+      UPDATE <Placeholder Property="tableName" />
       SET Retries=@retries, ExpiresAt=@expiresAt, StatusName=@statusName, Content=@content
       WHERE Id = @id
     </Statement>
 
     <Statement Id="InsertPublishedMessage">
-      INSERT INTO <Placeholder Property="TableName" />
+      INSERT INTO <Placeholder Property="tableName" />
       (
       [Id],
       [Version],
@@ -150,7 +150,7 @@
     </Statement>
 
     <Statement Id="InsertReceivedMessage">
-      INSERT INTO <Placeholder Property="TableName" />
+      INSERT INTO <Placeholder Property="tableName" />
       (
       [Id],
       [Version],
@@ -178,13 +178,13 @@
 
     <Statement Id="DeleteExpires">
       DELETE TOP (@batchCount)
-      FROM <Placeholder Property="TableName" /> WITH (READPAST)
+      FROM <Placeholder Property="tableName" /> WITH (READPAST)
       WHERE ExpiresAt &lt; @timeout
     </Statement>
 
     <Statement Id="GetMessagesOfNeedRetry">
       SELECT TOP (200) Id, Content, Retries, Added
-      FROM <Placeholder Property="TableName" /> WITH (READPAST)
+      FROM <Placeholder Property="tableName" /> WITH (READPAST)
       WHERE Retries &lt; @retries
       AND Version = @version AND Added &lt; @added
       AND (StatusName = 'Failed' OR StatusName = 'Scheduled')

@@ -37,7 +37,7 @@
       SELECT COUNT("Id") FROM <Placeholder Property="publishedTableName" /> WHERE "StatusName" = N'Succeeded'
       ) AS "PublishedSucceeded",
       (
-      SELECT COUNT("Id") FROM {_recName} WHERE "StatusName" = N'Succeeded'
+      SELECT COUNT("Id") FROM <Placeholder Property="receivedTableName" /> WHERE "StatusName" = N'Succeeded'
       ) AS "ReceivedSucceeded",
       (
       SELECT COUNT("Id") FROM <Placeholder Property="publishedTableName" /> WHERE "StatusName" = N'Failed'
