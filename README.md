@@ -36,10 +36,39 @@ public void ConfigureServices(IServiceCollection services)
 
 Config SmartSqlMapConfig.xml
 
+* MySql
+
 ``` xml
 <SmartSqlMaps>
-    <SmartSqlMap Path="Maps" Type="Directory"/>
-    <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" />
+  <SmartSqlMap Path="Maps" Type="Directory"/>
+  <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" />
+</SmartSqlMaps>
+```
+
+* PostgreSQL
+
+``` xml
+<SmartSqlMaps>
+  <SmartSqlMap Path="Maps" Type="Directory"/>
+  <SmartSqlMap Path="SmartSql.CAP.Maps.CapPostgreSql.xml,SmartSql.CAP" Type="Embedded" />
+</SmartSqlMaps>
+```
+
+* MSSQL 2008
+
+``` xml
+<SmartSqlMaps>
+  <SmartSqlMap Path="Maps" Type="Directory"/>
+  <SmartSqlMap Path="SmartSql.CAP.Maps.CapSqlServer2008.xml,SmartSql.CAP" Type="Embedded" />
+</SmartSqlMaps>
+```
+
+* MSSQL 2012+
+
+``` xml
+<SmartSqlMaps>
+  <SmartSqlMap Path="Maps" Type="Directory"/>
+  <SmartSqlMap Path="SmartSql.CAP.Maps.CapSqlServer.xml,SmartSql.CAP" Type="Embedded" />
 </SmartSqlMaps>
 ```
 
