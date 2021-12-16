@@ -64,6 +64,11 @@ namespace SmartSql.CAP
 
         public override void Dispose()
         {
+            if (DbTransaction is ITransaction transaction)
+            {
+                transaction.RollbackTransaction();
+            }
+
             DbTransaction = null;
         }
     }
