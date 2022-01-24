@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <NoWarn>1701;1702;1591</NoWarn>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <Version>1.0.3.1</Version>
+    <Version>1.0.5</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -12,7 +12,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
-    <PackageReleaseNotes>AddCapRepository method adds parameters.</PackageReleaseNotes>
+    <PackageReleaseNotes>fix transaction bug</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
