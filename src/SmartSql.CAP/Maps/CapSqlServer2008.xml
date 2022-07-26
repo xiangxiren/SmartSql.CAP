@@ -51,16 +51,16 @@
     <Statement Id="GetStatistics">
       SELECT
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="PublishedTableName" /> WHERE StatusName = N'Succeeded'
+      SELECT COUNT(Id) FROM <Placeholder Property="publishedTableName" /> WHERE StatusName = N'Succeeded'
       ) AS PublishedSucceeded,
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="ReceivedTableName" /> WHERE StatusName = N'Succeeded'
+      SELECT COUNT(Id) FROM <Placeholder Property="receivedTableName" /> WHERE StatusName = N'Succeeded'
       ) AS ReceivedSucceeded,
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="PublishedTableName" /> WHERE StatusName = N'Failed'
+      SELECT COUNT(Id) FROM <Placeholder Property="publishedTableName" /> WHERE StatusName = N'Failed'
       ) AS PublishedFailed,
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="ReceivedTableName" /> WHERE StatusName = N'Failed'
+      SELECT COUNT(Id) FROM <Placeholder Property="receivedTableName" /> WHERE StatusName = N'Failed'
       ) AS ReceivedFailed
     </Statement>
 
