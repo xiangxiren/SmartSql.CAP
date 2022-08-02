@@ -51,16 +51,16 @@
     <Statement Id="GetStatistics">
       SELECT
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="PublishedTableName" /> WHERE StatusName = N'Succeeded'
+      SELECT COUNT(Id) FROM <Placeholder Property="publishedTableName" /> WHERE StatusName = N'Succeeded'
       ) AS PublishedSucceeded,
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="ReceivedTableName" /> WHERE StatusName = N'Succeeded'
+      SELECT COUNT(Id) FROM <Placeholder Property="receivedTableName" /> WHERE StatusName = N'Succeeded'
       ) AS ReceivedSucceeded,
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="PublishedTableName" /> WHERE StatusName = N'Failed'
+      SELECT COUNT(Id) FROM <Placeholder Property="publishedTableName" /> WHERE StatusName = N'Failed'
       ) AS PublishedFailed,
       (
-      SELECT COUNT(Id) FROM <Placeholder Property="ReceivedTableName" /> WHERE StatusName = N'Failed'
+      SELECT COUNT(Id) FROM <Placeholder Property="receivedTableName" /> WHERE StatusName = N'Failed'
       ) AS ReceivedFailed
     </Statement>
 
@@ -68,7 +68,7 @@
       WITH aggr as (
       SELECT FORMAT(Added,'yyyy-MM-dd-HH') AS [Key],
       COUNT(Id) AS [Count]
-      FROM  <Placeholder Property="TableName" />
+      FROM  <Placeholder Property="tableName" />
       WHERE StatusName = @statusName
       GROUP BY FORMAT(Added,'yyyy-MM-dd-HH')
       )
@@ -76,7 +76,7 @@
     </Statement>
 
     <Statement Id="QueryMessages" >
-      SELECT * From <Placeholder Property="TableName" />
+      SELECT * From <Placeholder Property="tableName" />
       <Where>
         <IsNotEmpty Prepend="And" Property="StatusName">
           StatusName = @statusName
@@ -96,24 +96,24 @@
     </Statement>
 
     <Statement Id="GetNumberOfMessage">
-      SELECT COUNT(Id) FROM <Placeholder Property="TableName" />
+      SELECT COUNT(Id) FROM <Placeholder Property="tableName" />
       WHERE StatusName = @statusName
     </Statement>
 
     <Statement Id="GetMessage">
       SELECT Id AS DbId, Content, Added, ExpiresAt, Retries
-      FROM <Placeholder Property="TableName" />
+      FROM <Placeholder Property="tableName" />
       WHERE Id = @id
     </Statement>
 
     <Statement Id="ChangeMessageState">
-      UPDATE <Placeholder Property="TableName" />
+      UPDATE <Placeholder Property="tableName" />
       SET Retries=@retries, ExpiresAt=@expiresAt, StatusName=@statusName, Content=@content
       WHERE Id = @id
     </Statement>
 
     <Statement Id="InsertPublishedMessage">
-      INSERT INTO <Placeholder Property="TableName" />
+      INSERT INTO <Placeholder Property="tableName" />
       (
       [Id],
       [Version],
@@ -138,7 +138,7 @@
     </Statement>
 
     <Statement Id="InsertReceivedMessage">
-      INSERT INTO <Placeholder Property="TableName" />
+      INSERT INTO <Placeholder Property="tableName" />
       (
       [Id],
       [Version],
@@ -166,13 +166,13 @@
 
     <Statement Id="DeleteExpires">
       DELETE TOP (@batchCount)
-      FROM <Placeholder Property="TableName" /> WITH (READPAST)
+      FROM <Placeholder Property="tableName" /> WITH (READPAST)
       WHERE ExpiresAt &lt; @timeout
     </Statement>
 
     <Statement Id="GetMessagesOfNeedRetry">
       SELECT TOP (200) Id, Content, Retries, Added
-      FROM <Placeholder Property="TableName" /> WITH (READPAST)
+      FROM <Placeholder Property="tableName" /> WITH (READPAST)
       WHERE Retries &lt; @retries
       AND Version = @version AND Added &lt; @added
       AND (StatusName = 'Failed' OR StatusName = 'Scheduled')

@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.0.2</Version>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Version>1.0.2.1</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -10,20 +12,10 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
-    <PackageReleaseNotes>Fix memory leak when using transction to publish message.And upgrade the version of the dependent package.</PackageReleaseNotes>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>0</WarningLevel>
-    <NoWarn>1701;1702;1591</NoWarn>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>bin\Debug\SmartSql.CAP.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;1591</NoWarn>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>bin\Release\SmartSql.CAP.xml</DocumentationFile>
+    <PackageReleaseNotes>
+      1.Method AddCapRepository adds parameters
+      2.Modify SQL in XML
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
