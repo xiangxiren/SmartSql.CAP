@@ -36,7 +36,16 @@ public void ConfigureServices(IServiceCollection services)
 
 Config SmartSqlMapConfig.xml
 
-* MySql
+* MySql 8.0- (Not support `FOR UPDATE SKIP LOCKED`)
+
+``` xml
+<SmartSqlMaps>
+  <SmartSqlMap Path="Maps" Type="Directory"/>
+  <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" />
+</SmartSqlMaps>
+```
+
+* MySql 8.0+ (Support `FOR UPDATE SKIP LOCKED`)
 
 ``` xml
 <SmartSqlMaps>

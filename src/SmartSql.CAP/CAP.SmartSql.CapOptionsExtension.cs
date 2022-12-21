@@ -5,25 +5,24 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SmartSql.CAP;
 
 // ReSharper disable once CheckNamespace
-namespace DotNetCore.CAP
+namespace DotNetCore.CAP;
+
+internal class MySqlCapOptionsExtension : ICapOptionsExtension
 {
-    internal class MySqlCapOptionsExtension : ICapOptionsExtension
+    private readonly Action<SmartSqlOptions> _configure;
+
+    public MySqlCapOptionsExtension(Action<SmartSqlOptions> configure)
     {
-        private readonly Action<SmartSqlOptions> _configure;
+        _configure = configure;
+    }
 
-        public MySqlCapOptionsExtension(Action<SmartSqlOptions> configure)
-        {
-            _configure = configure;
-        }
+    public void AddServices(IServiceCollection services)
+    {
+        services.AddSingleton<CapStorageMarkerService>();
+        services.AddSingleton<IDataStorage, SmartSqlDataStorage>();
 
-        public void AddServices(IServiceCollection services)
-        {
-            services.AddSingleton<CapStorageMarkerService>();
-            services.AddSingleton<IDataStorage, SmartSqlDataStorage>();
-            
-            services.TryAddSingleton<IStorageInitializer, SmartSqlStorageInitializer>();
+        services.TryAddSingleton<IStorageInitializer, SmartSqlStorageInitializer>();
 
-            services.Configure(_configure);
-        } 
+        services.Configure(_configure);
     }
 }

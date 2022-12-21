@@ -1,40 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DotNetCore.CAP.Internal;
 using DotNetCore.CAP.Monitoring;
 using DotNetCore.CAP.Persistence;
 
-namespace SmartSql.CAP
+namespace SmartSql.CAP;
+
+public interface ICapRepository
 {
-    public interface ICapRepository
-    {
-        Task InitializeTablesAsync(string schema, string receivedTableName, string publishedTableName);
+    ISqlMapper SqlMapper { get; }
 
-        StatisticsDto GetStatistics(string receivedTableName, string publishedTableName);
+    Task InitializeTablesAsync(string schema, string receivedTableName, string publishedTableName);
 
-        List<TimelineCounter> GetTimelineStats(string tableName, string statusName, string minKey,
-            string maxKey);
+    Task<StatisticsDto> GetStatisticsAsync(string receivedTableName, string publishedTableName);
 
-        List<MessageDto> QueryMessages(string tableName, string name, string group, string content, string statusName,
-            int limit, int offset);
+    Task<List<TimelineCounter>> GetTimelineStatsAsync(string tableName, string statusName, string? minKey,
+        string? maxKey);
 
-        long GetRecord(string tableName, string name, string group, string content, string statusName);
+    Task<List<MessageDto>> QueryMessagesAsync(string tableName, string? name, string? group, string? content, string? statusName,
+        int limit, int offset);
 
-        int GetNumberOfMessage(string tableName, string statusName);
+    Task<long> GetRecordAsync(string tableName, string? name, string? group, string? content, string? statusName);
 
-        Task<MediumMessage> GetMessageAsync(string tableName, long id);
+    Task<int> GetNumberOfMessageAsync(string tableName, string statusName);
 
-        Task ChangeMessageStateAsync(string tableName, string id, int retries, DateTime? expiresAt, string statusName, string content);
+    Task<MediumMessage> GetMessageAsync(string tableName, long id);
 
-        void InsertPublishedMessage(string tableName, string id, string version, string name, string content,
-            int retries, DateTime added, DateTime? expiresAt, string statusName);
+    Task ChangePublishStateToDelayedAsync(string tableName, string[] ids, StatusName statusName = StatusName.Delayed);
 
-        void InsertReceivedMessage(string tableName, string id, string version, string name, string group,
-            string content, int retries, DateTime added, DateTime? expiresAt, string statusName);
+    Task ChangeMessageStateAsync(string tableName, string id, int retries, DateTime? expiresAt, string statusName, string content);
 
-        Task<int> DeleteExpiresAsync(string tableName, DateTime timeout, int batchCount);
+    Task InsertPublishedMessageAsync(string tableName, string id, string version, string name, string content,
+        int retries, DateTime added, DateTime? expiresAt, string statusName);
 
-        Task<List<MessagesOfNeedRetry>> GetMessagesOfNeedRetryAsync(string tableName, int retries, string version,
-            string added);
-    }
+    Task InsertReceivedMessageAsync(string tableName, string id, string version, string name, string group,
+        string content, int retries, DateTime added, DateTime? expiresAt, string statusName);
+
+    Task<int> DeleteExpiresAsync(string tableName, DateTime timeout, int batchCount);
+
+    Task<List<MessagesOfNeedRetry>> GetMessagesOfNeedRetryAsync(string tableName, int retries, string version,
+        DateTime added);
+
+    Task<List<MessagesOfNeedRetry>> GetMessagesOfDelayedAsync(string tableName, string version,
+        DateTime twoMinutesLater, DateTime oneMinutesAgo);
 }

@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <NoWarn>1701;1702;1591</NoWarn>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>1.0.5</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
@@ -13,6 +14,7 @@
     <PackageTags>CAP;SmartSql</PackageTags>
     <PackageProjectUrl>https://github.com/xiangxiren/SmartSql.CAP</PackageProjectUrl>
     <PackageReleaseNotes>fix transaction bug</PackageReleaseNotes>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,9 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="DotNetCore.CAP" Version="6.0.0" />
-    <PackageReference Include="SmartSql.DIExtension" Version="4.1.57" />
+    <None Remove="Maps\CapMySql8.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.3.0" />
+    <PackageReference Include="DotNetCore.CAP" Version="7.0.1" />
+    <PackageReference Include="SmartSql.DIExtension" Version="4.1.64" />
   </ItemGroup>
 
 </Project>

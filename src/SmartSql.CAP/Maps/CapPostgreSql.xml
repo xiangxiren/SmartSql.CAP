@@ -44,7 +44,10 @@
       ) AS "PublishedFailed",
       (
       SELECT COUNT("Id") FROM <Placeholder Property="receivedTableName" /> WHERE "StatusName" = N'Failed'
-      ) AS "ReceivedFailed"
+      ) AS "ReceivedFailed",
+      (
+      SELECT COUNT("Id") FROM <Placeholder Property="publishedTableName" /> WHERE "StatusName" = N'Delayed'
+      ) AS "PublishedDelayed"
     </Statement>
 
     <Statement Id="GetTimelineStats">
@@ -99,10 +102,16 @@
       WHERE "Id" = @id FOR UPDATE SKIP LOCKED
     </Statement>
 
+    <Statement Id="ChangePublishStateToDelayed">
+      UPDATE <Placeholder Property="tableName" />
+      SET "StatusName"=@statusName, "Content"=@content
+      WHERE "Id" IN @ids
+    </Statement>
+
     <Statement Id="ChangeMessageState">
       UPDATE <Placeholder Property="tableName" />
       SET "Retries"=@retries, "ExpiresAt"=@expiresAt, "StatusName"=@statusName, "Content"=@content
-      WHERE "Id" = @Id
+      WHERE "Id" = @id
     </Statement>
 
     <Statement Id="InsertPublishedMessage">
@@ -158,18 +167,35 @@
     </Statement>
 
     <Statement Id="DeleteExpires">
+      <![CDATA[
       DELETE FROM <Placeholder Property="tableName" />
-      WHERE "ExpiresAt" &lt; @timeout AND "Id" IN (SELECT "Id" FROM <Placeholder Property="tableName" /> LIMIT @batchCount)
+      WHERE "ExpiresAt" < @timeout
+      AND "Id" IN (SELECT "Id" FROM <Placeholder Property="tableName" />
+      LIMIT @batchCount)
+      ]]>
     </Statement>
 
     <Statement Id="GetMessagesOfNeedRetry">
+      <![CDATA[
       SELECT "Id","Content","Retries","Added"
       FROM <Placeholder Property="tableName" />
-      WHERE "Retries" &lt; @retries
+      WHERE "Retries" < @retries
       AND "Version" = @version
-      AND "Added" &lt; @added
+      AND "Added" < @added
       AND ("StatusName" = 'Failed' OR "StatusName" = 'Scheduled')
       LIMIT 200
+      ]]>
+    </Statement>
+
+    <Statement Id="GetMessagesOfDelayed">
+      <![CDATA[
+      SELECT "Id","Content","Retries","Added","ExpiresAt"
+      FROM <Placeholder Property="tableName" />
+      WHERE "Version" = @version
+      AND (("ExpiresAt" < @twoMinutesLater AND "StatusName" = 'Delayed') 
+            OR ("ExpiresAt" < @oneMinutesAgo AND "StatusName" = 'Queued'))
+      FOR UPDATE SKIP LOCKED
+      ]]>
     </Statement>
 
   </Statements>

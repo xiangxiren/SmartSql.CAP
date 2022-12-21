@@ -5,49 +5,50 @@ using DotNetCore.CAP.Persistence;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace SmartSql.CAP
+namespace SmartSql.CAP;
+
+public class SmartSqlStorageInitializer : IStorageInitializer
 {
-    public class SmartSqlStorageInitializer : IStorageInitializer
+    private readonly IOptions<SmartSqlOptions> _options;
+    private readonly ILogger _logger;
+    private readonly ICapRepository _capRepository;
+
+    public SmartSqlStorageInitializer(
+        ILogger<SmartSqlStorageInitializer> logger,
+        IOptions<SmartSqlOptions> options,
+        ICapRepository capRepository)
     {
-        private readonly IOptions<SmartSqlOptions> _options;
-        private readonly ILogger _logger;
-        private readonly ICapRepository _capRepository;
+        _options = options;
+        _capRepository = capRepository;
+        _logger = logger;
+    }
 
-        public SmartSqlStorageInitializer(
-            ILogger<SmartSqlStorageInitializer> logger,
-            IOptions<SmartSqlOptions> options,
-            ICapRepository capRepository)
+    public virtual string GetPublishedTableName()
+    {
+        return $"{_options.Value.Schema}.published";
+    }
+
+    public virtual string GetReceivedTableName()
+    {
+        return $"{_options.Value.Schema}.received";
+    }
+
+    public async Task InitializeAsync(CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
         {
-            _options = options;
-            _capRepository = capRepository;
-            _logger = logger;
+            return;
         }
 
-        public virtual string GetPublishedTableName()
+        if (!_options.Value.InitializeTable)
         {
-            return $"{_options.Value.Schema}.published";
+            _logger.LogDebug("The initial value is false, it will not execute SQL to create the table structure.");
+            return;
         }
 
-        public virtual string GetReceivedTableName()
-        {
-            return $"{_options.Value.Schema}.received";
-        }
-
-        public async Task InitializeAsync(CancellationToken cancellationToken)
-        {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
-
-            if (!_options.Value.InitializeTable)
-            {
-                _logger.LogDebug("The initial value is false, it will not execute SQL to create the table structure.");
-                return;
-            }
-
-            await _capRepository.InitializeTablesAsync(_options.Value.Schema, GetReceivedTableName(), GetPublishedTableName());
-            _logger.LogDebug("Ensuring all create database tables script are applied.");
-        }
+        await _capRepository
+            .InitializeTablesAsync(_options.Value.Schema, GetReceivedTableName(), GetPublishedTableName())
+            .ConfigureAwait(false);
+        _logger.LogDebug("Ensuring all create database tables script are applied.");
     }
 }

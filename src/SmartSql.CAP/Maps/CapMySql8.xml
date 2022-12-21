@@ -199,7 +199,7 @@
       WHERE `Version` = ?version
       AND ((`ExpiresAt` < ?twoMinutesLater AND `StatusName` = 'Delayed') 
             OR (`ExpiresAt` < ?oneMinutesAgo AND `StatusName` = 'Queued'))
-      FOR UPDATE
+      FOR UPDATE SKIP LOCKED
       ]]>
     </Statement>
 

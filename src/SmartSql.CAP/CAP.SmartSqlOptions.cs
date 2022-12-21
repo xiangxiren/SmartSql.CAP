@@ -1,23 +1,22 @@
 ﻿// ReSharper disable once CheckNamespace
-namespace DotNetCore.CAP
+namespace DotNetCore.CAP;
+
+public class SmartSqlOptions
 {
-    public class SmartSqlOptions
-    {
-        public const string DefaultSchema = "cap";
+    public const string DefaultSchema = "cap";
 
-        /// <summary>
-        /// Gets or sets the schema to use when creating database objects.
-        /// </summary>
-        public string Schema { get; set; } = DefaultSchema;
+    /// <summary>
+    /// Gets or sets the schema to use when creating database objects.
+    /// </summary>
+    public string Schema { get; set; } = DefaultSchema;
 
-        /// <summary>
-        /// Data version
-        /// </summary>
-        public string Version { get; set; } = "v1";
+    /// <summary>
+    /// Data version
+    /// </summary>
+    public string Version { get; set; } = "v1";
 
-        /// <summary>
-        /// Get or set whether to execute SQL to create a table. Default is true
-        /// </summary>
-        public bool InitializeTable { get; set; } = true;
-    }
+    /// <summary>
+    /// Get or set whether to execute SQL to create a table. Default is true
+    /// </summary>
+    public bool InitializeTable { get; set; } = true;
 }

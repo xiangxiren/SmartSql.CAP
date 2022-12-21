@@ -8,45 +8,44 @@ using SmartSql.CAP;
 using SmartSql.Exceptions;
 
 // ReSharper disable once CheckNamespace
-namespace SmartSql.AOP
+namespace SmartSql.AOP;
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class CapTransactionAttribute : AbstractInterceptorAttribute
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class CapTransactionAttribute : AbstractInterceptorAttribute
+    public string Alias { get; set; } = SmartSqlBuilder.DEFAULT_ALIAS;
+
+    public IsolationLevel Level { get; set; } = IsolationLevel.Unspecified;
+
+    public bool AutoCommit { get; set; } = false;
+
+    public override async Task Invoke(AspectContext context, AspectDelegate next)
     {
-        public string Alias { get; set; } = SmartSqlBuilder.DEFAULT_ALIAS;
-
-        public IsolationLevel Level { get; set; } = IsolationLevel.Unspecified;
-
-        public bool AutoCommit { get; set; } = false;
-
-        public override async Task Invoke(AspectContext context, AspectDelegate next)
+        var sessionStore = context.ServiceProvider.GetSessionStore(Alias);
+        if (sessionStore == null)
         {
-            var sessionStore = context.ServiceProvider.GetSessionStore(Alias);
-            if (sessionStore == null)
-            {
-                throw new SmartSqlException($"can not find SmartSql instance by Alias:{Alias}.");
-            }
+            throw new SmartSqlException($"can not find SmartSql instance by Alias:{Alias}.");
+        }
 
-            var publisher = context.ServiceProvider.GetService<ICapPublisher>();
-            if (publisher == null)
-            {
-                throw new SmartSqlException($"Unable to resolve service for type {typeof(ICapPublisher).FullName}.");
-            }
+        var publisher = context.ServiceProvider.GetService<ICapPublisher>();
+        if (publisher == null)
+        {
+            throw new SmartSqlException($"Unable to resolve service for type {typeof(ICapPublisher).FullName}.");
+        }
 
-            var transcation = sessionStore.LocalSession?.Transaction;
-            if (transcation != null)
-            {
-                throw new SmartSqlException(
-                    "SmartSqlMapper could not invoke BeginCapTransaction(). A CapTransaction is already existed.");
-            }
+        var transcation = sessionStore.LocalSession?.Transaction;
+        if (transcation != null)
+        {
+            throw new SmartSqlException(
+                "SmartSqlMapper could not invoke BeginCapTransaction(). A CapTransaction is already existed.");
+        }
 
-            using (sessionStore)
+        using (sessionStore)
+        {
+            await sessionStore.Open().CapTransactionWrapAsync(Level, publisher, async () =>
             {
-                await sessionStore.Open().CapTransactionWrapAsync(Level, publisher, async () =>
-                {
-                    await next.Invoke(context);
-                }, AutoCommit);
-            }
+                await next.Invoke(context);
+            }, AutoCommit);
         }
     }
 }

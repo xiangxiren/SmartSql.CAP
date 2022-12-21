@@ -2,27 +2,26 @@
 using DotNetCore.CAP;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static class CapOptionsExtensions
 {
-    public static class CapOptionsExtensions
+    public static CapOptions UseSmartSql(this CapOptions options)
     {
-        public static CapOptions UseSmartSql(this CapOptions options)
+        return options.UseSmartSql(_ => { });
+    }
+
+    public static CapOptions UseSmartSql(this CapOptions options, Action<SmartSqlOptions> configure)
+    {
+        if (configure == null)
         {
-            return options.UseSmartSql(opts => { });
+            throw new ArgumentNullException(nameof(configure));
         }
 
-        public static CapOptions UseSmartSql(this CapOptions options, Action<SmartSqlOptions> configure)
-        {
-            if (configure == null)
-            {
-                throw new ArgumentNullException(nameof(configure));
-            }
+        configure += x => x.Version = options.Version;
 
-            configure += x => x.Version = options.Version;
+        options.RegisterExtension(new MySqlCapOptionsExtension(configure));
 
-            options.RegisterExtension(new MySqlCapOptionsExtension(configure));
-
-            return options;
-        }
+        return options;
     }
 }

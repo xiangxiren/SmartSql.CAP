@@ -5,66 +5,65 @@ using DotNetCore.CAP;
 using DotNetCore.CAP.Transport;
 using SmartSql.DbSession;
 
-namespace SmartSql.CAP
+namespace SmartSql.CAP;
+
+public class SmartSqlCapTransaction : CapTransactionBase
 {
-    public class SmartSqlCapTransaction : CapTransactionBase
+    public SmartSqlCapTransaction(
+        IDispatcher dispatcher) : base(dispatcher)
     {
-        public SmartSqlCapTransaction(
-            IDispatcher dispatcher) : base(dispatcher)
+    }
+
+    public override void Commit()
+    {
+        Debug.Assert(DbTransaction != null);
+
+        if (DbTransaction is ITransaction transaction)
         {
+            transaction.CommitTransaction();
         }
 
-        public override void Commit()
+        Flush();
+    }
+
+    public override async Task CommitAsync(CancellationToken cancellationToken = default)
+    {
+        Debug.Assert(DbTransaction != null);
+
+        if (DbTransaction is ITransaction transaction)
         {
-            Debug.Assert(DbTransaction != null);
-
-            if (DbTransaction is ITransaction transaction)
-            {
-                transaction.CommitTransaction();
-            }
-
-            Flush();
+            transaction.CommitTransaction();
         }
 
-        public override async Task CommitAsync(CancellationToken cancellationToken = default)
+        Flush();
+
+        await Task.CompletedTask;
+    }
+
+    public override void Rollback()
+    {
+        Debug.Assert(DbTransaction != null);
+
+        if (DbTransaction is ITransaction transaction)
         {
-            Debug.Assert(DbTransaction != null);
+            transaction.RollbackTransaction();
+        }
+    }
 
-            if (DbTransaction is ITransaction transaction)
-            {
-                transaction.CommitTransaction();
-            }
+    public override async Task RollbackAsync(CancellationToken cancellationToken = default)
+    {
+        Debug.Assert(DbTransaction != null);
 
-            Flush();
-
-            await Task.CompletedTask;
+        if (DbTransaction is ITransaction transaction)
+        {
+            transaction.RollbackTransaction();
         }
 
-        public override void Rollback()
-        {
-            Debug.Assert(DbTransaction != null);
+        await Task.CompletedTask;
+    }
 
-            if (DbTransaction is ITransaction transaction)
-            {
-                transaction.RollbackTransaction();
-            }
-        }
-
-        public override async Task RollbackAsync(CancellationToken cancellationToken = default)
-        {
-            Debug.Assert(DbTransaction != null);
-
-            if (DbTransaction is ITransaction transaction)
-            {
-                transaction.RollbackTransaction();
-            }
-
-            await Task.CompletedTask;
-        }
-
-        public override void Dispose()
-        {
-            DbTransaction = null;
-        }
+    public override void Dispose()
+    {
+        DbTransaction = null;
     }
 }

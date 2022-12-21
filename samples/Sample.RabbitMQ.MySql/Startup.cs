@@ -38,11 +38,11 @@ namespace Sample.RabbitMQ.MySql
                 });
                 options.UseRabbitMQ(option =>
                 {
-                    option.HostName = Configuration["RabbitMQConfig:HostName"];
+                    option.HostName = Configuration["RabbitMQConfig:HostName"]!;
                     option.Port = Configuration.GetValue<int>("RabbitMQConfig:Port");
-                    option.VirtualHost = Configuration["RabbitMQConfig:VirtualHost"];
-                    option.UserName = Configuration["RabbitMQConfig:UserName"];
-                    option.Password = Configuration["RabbitMQConfig:Password"];
+                    option.VirtualHost = Configuration["RabbitMQConfig:VirtualHost"]!;
+                    option.UserName = Configuration["RabbitMQConfig:UserName"]!;
+                    option.Password = Configuration["RabbitMQConfig:Password"]!;
                 });
                 options.UseDashboard();
             });
