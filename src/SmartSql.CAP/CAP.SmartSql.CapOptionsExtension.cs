@@ -18,9 +18,8 @@ internal class MySqlCapOptionsExtension : ICapOptionsExtension
 
     public void AddServices(IServiceCollection services)
     {
-        services.AddSingleton<CapStorageMarkerService>();
+        services.AddSingleton(new CapStorageMarkerService("SmartSql"));
         services.AddSingleton<IDataStorage, SmartSqlDataStorage>();
-
         services.TryAddSingleton<IStorageInitializer, SmartSqlStorageInitializer>();
 
         services.Configure(_configure);

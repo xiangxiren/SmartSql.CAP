@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DotNetCore.CAP;
 using Sample.RabbitMQ.MySql.Domain;
 using Sample.RabbitMQ.MySql.Repository;
@@ -19,24 +18,26 @@ namespace Sample.RabbitMQ.MySql.Service
             _publisher = publisher;
         }
 
-        public async Task<Person> GetByIdAsync(long id) =>
+        public async Task<Person> GetByIdAsync(int id) =>
             await _repository.GetByIdAsync(id);
+
+        public async Task<int> InsertAsync(Person person) => await _repository.InsertAsync(person);
 
         [CapTransaction]
         public virtual async Task AopAddAsync()
         {
-            var person = new Person { Id = DateTime.Now.ToFileTimeUtc(), Name = "test1" };
-            await _repository.InsertAsync(person);
+            var person = new Person { Name = "test1" };
+            person.Id = await _repository.InsertAsync(person);
 
-            await _publisher.PublishAsync("sample.kafka.mysql", person.Id);
+            await _publisher.PublishAsync("sample.rabbitmq.mysql", person.Id);
         }
 
         public async Task MtAddAsync()
         {
             using var trans = _repository.SqlMapper.BeginCapTransaction(_publisher);
-            var person = new Person { Id = DateTime.Now.ToFileTimeUtc(), Name = "test1" };
-            await _repository.InsertAsync(person);
-            await _publisher.PublishAsync("sample.kafka.mysql", person.Id);
+            var person = new Person { Name = "test1" };
+            person.Id = await _repository.InsertAsync(person);
+            await _publisher.PublishAsync("sample.rabbitmq.mysql", person.Id);
 
             await trans.CommitAsync();
         }

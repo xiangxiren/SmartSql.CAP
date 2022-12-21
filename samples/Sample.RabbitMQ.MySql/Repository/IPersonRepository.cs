@@ -4,7 +4,7 @@ using SmartSql.DyRepository;
 
 namespace Sample.RabbitMQ.MySql.Repository
 {
-    public interface IPersonRepository : IInsertAsync<Person>, IGetEntityAsync<Person, long>
+    public interface IPersonRepository : IInsertAsync<Person>, IGetEntityAsync<Person, int>
     {
         ISqlMapper SqlMapper { get; }
     }

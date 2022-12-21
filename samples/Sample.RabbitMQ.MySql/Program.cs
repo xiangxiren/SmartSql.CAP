@@ -1,6 +1,7 @@
 using AspectCore.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Sample.RabbitMQ.MySql
 {
@@ -14,6 +15,11 @@ namespace Sample.RabbitMQ.MySql
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseDynamicProxy()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                .ConfigureLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    builder.AddConsole();
+                });
     }
 }

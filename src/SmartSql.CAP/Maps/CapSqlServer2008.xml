@@ -186,32 +186,26 @@
     </Statement>
 
     <Statement Id="DeleteExpires">
-      <![CDATA[
       DELETE TOP (@batchCount)
       FROM <Placeholder Property="tableName" /> WITH (READPAST)
-      WHERE ExpiresAt< @timeout
-      ]]>
+      WHERE ExpiresAt &lt; @timeout
     </Statement>
 
     <Statement Id="GetMessagesOfNeedRetry">
-      <![CDATA[
       SELECT TOP (200) Id, Content, Retries, Added
       FROM <Placeholder Property="tableName" /> WITH (READPAST)
-      WHERE Retries < @retries
-      AND Version = @version 
-      AND Added < @added
+      WHERE Retries &lt; @retries
+      AND Version = @version
+      AND Added &lt; @added
       AND (StatusName = 'Failed' OR StatusName = 'Scheduled')
-      ]]>
     </Statement>
 
     <Statement Id="GetMessagesOfDelayed">
-      <![CDATA[
       SELECT Id,Content,Retries,Added,ExpiresAt
       FROM <Placeholder Property="tableName" /> WITH (UPDLOCK,READPAST)
       WHERE Version = @version
-      AND ((ExpiresAt < @twoMinutesLater AND StatusName = 'Delayed') 
-            OR (ExpiresAt < @oneMinutesAgo AND StatusName = 'Queued'))
-      ]]>
+      AND ((ExpiresAt &lt; @twoMinutesLater AND StatusName = 'Delayed')
+      OR (ExpiresAt &lt; @oneMinutesAgo AND StatusName = 'Queued'))
     </Statement>
 
   </Statements>
