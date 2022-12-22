@@ -14,19 +14,19 @@
       ?Id,
       ?Name
       )
-      ;Select Last_Insert_Id();
+      ;SELECT Last_Insert_Id();
     </Statement>
 
     <!--获取表映射实体-->
     <Statement Id="GetEntity" AutoConverter="PascalConverter">
-      Select T.id, T.name
-      From person As T
+      SELECT T.id, T.name
+      FROM person As T
       <Where Min="1">
         <IsNotEmpty Prepend="And" Property="Id">
           T.id= ?Id
         </IsNotEmpty>
       </Where>
-      Limit 1
+      LIMIT 1
     </Statement>
   </Statements>
 

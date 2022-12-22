@@ -85,7 +85,7 @@
     </Statement>
 
     <Statement Id="QueryMessages" >
-      Select * From `<Placeholder Property="tableName" />`
+      SELECT * FROM `<Placeholder Property="tableName" />`
       <Include RefId="QueryParams" />
       ORDER BY Added DESC
       LIMIT ?limit OFFSET ?offset
@@ -93,7 +93,7 @@
 
     <!--获取记录数-->
     <Statement Id="GetRecord">
-      Select Count(1) From `<Placeholder Property="tableName" />`
+      SELECT COUNT(1) FROM `<Placeholder Property="tableName" />`
       <Include RefId="QueryParams" />
     </Statement>
 

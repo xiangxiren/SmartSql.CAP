@@ -50,7 +50,7 @@ Config SmartSqlMapConfig.xml
 ``` xml
 <SmartSqlMaps>
   <SmartSqlMap Path="Maps" Type="Directory"/>
-  <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql.xml,SmartSql.CAP" Type="Embedded" />
+  <SmartSqlMap Path="SmartSql.CAP.Maps.CapMySql8.xml,SmartSql.CAP" Type="Embedded" />
 </SmartSqlMaps>
 ```
 

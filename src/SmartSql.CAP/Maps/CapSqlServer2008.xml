@@ -98,7 +98,7 @@
     <Statement Id="QueryMessages" >
       SELECT * FROM
       (
-      SELECT T.*, ROW_NUMBER() OVER(ORDER BY T.Added DESC) AS row_number From <Placeholder Property="tableName" /> AS T
+      SELECT T.*, ROW_NUMBER() OVER(ORDER BY T.Added DESC) AS row_number FROM <Placeholder Property="tableName" /> AS T
       <Include RefId="QueryParams" />
       ) AS tbl
       WHERE tbl.row_number BETWEEN @offset and @offset + @limit
@@ -106,7 +106,7 @@
 
     <!--获取记录数-->
     <Statement Id="GetRecord">
-      Select Count(1) From <Placeholder Property="tableName" />
+      SELECT COUNT(1) FROM <Placeholder Property="tableName" />
       <Include RefId="QueryParams" />
     </Statement>
 
