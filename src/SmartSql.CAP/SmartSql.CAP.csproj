@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Maps\CapMySql8.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.3.0" />
     <PackageReference Include="DotNetCore.CAP" Version="7.0.1" />
     <PackageReference Include="SmartSql.DIExtension" Version="4.1.64" />
