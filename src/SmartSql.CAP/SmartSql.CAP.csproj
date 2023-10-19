@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <NoWarn>1701;1702;1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
     <Authors>xiangxiren</Authors>
     <Company>xiangxiren</Company>
     <RepositoryUrl>https://github.com/xiangxiren/SmartSql.CAP</RepositoryUrl>
@@ -21,9 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.3.0" />
-    <PackageReference Include="DotNetCore.CAP" Version="7.0.1" />
-    <PackageReference Include="SmartSql.DIExtension" Version="4.1.64" />
+    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
+    <PackageReference Include="DotNetCore.CAP" Version="7.2.1" />
+    <PackageReference Include="SmartSql.DIExtension" Version="4.1.67" />
   </ItemGroup>
 
 </Project>

@@ -29,6 +29,17 @@
       "ExpiresAt" TIMESTAMP NULL,
       "StatusName" VARCHAR(50) NOT NULL
       );
+
+      <IsTrue Prepend="" Property="userStorageLock">
+        CREATE TABLE IF NOT EXISTS <Placeholder Property="lockTableName" />(
+        ""Key"" VARCHAR(128) PRIMARY KEY NOT NULL,
+        ""Instance"" VARCHAR(256),
+        ""LastLockTime"" TIMESTAMP NOT NULL
+        );
+
+        INSERT INTO <Placeholder Property="lockTableName" /> (""Key"",""Instance"",""LastLockTime"") VALUES(@pubKey,'',@lastLockTime) ON CONFLICT DO NOTHING;
+        INSERT INTO <Placeholder Property="lockTableName" /> (""Key"",""Instance"",""LastLockTime"") VALUES(@recKey,'',@lastLockTime) ON CONFLICT DO NOTHING;
+      </IsTrue>
     </Statement>
 
     <Statement Id="GetStatistics">
@@ -189,6 +200,27 @@
       WHERE "Version" = @version
       AND (("ExpiresAt" &lt; @twoMinutesLater AND "StatusName" = 'Delayed') OR ("ExpiresAt" &lt; @oneMinutesAgo AND "StatusName" = 'Queued'))
       FOR UPDATE SKIP LOCKED
+    </Statement>
+
+    <Statement Id="AcquireLock">
+      UPDATE <Placeholder Property="tableName" />
+      SET "Instance"=@instance,"LastLockTime"=@lastLockTime
+      WHERE "Key"=@Key 
+      AND "LastLockTime" &lt; @ttl;
+    </Statement>
+
+    <Statement Id="ReleaseLock">
+      UPDATE <Placeholder Property="tableName" />
+      SET "Instance"='',"LastLockTime"=@lastLockTime
+      WHERE "Key"=@key
+      AND "Instance"=@instance
+    </Statement>
+
+    <Statement Id="RenewLock">
+      UPDATE <Placeholder Property="tableName" />
+      SET "LastLockTime"="LastLockTime"+interval @totalSeconds second
+      WHERE "Key"=@key
+      AND "Instance"=@instance
     </Statement>
 
   </Statements>

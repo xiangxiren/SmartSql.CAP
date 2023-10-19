@@ -33,6 +33,19 @@
       PRIMARY KEY (`Id`),
       INDEX `IX_ExpiresAt`(`ExpiresAt`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+      <IsTrue Prepend="" Property="userStorageLock">
+        CREATE TABLE IF NOT EXISTS `<Placeholder Property="lockTableName" />` (
+        `Key` varchar(128) NOT NULL,
+        `Instance` varchar(256) DEFAULT NULL,
+        `LastLockTime` datetime DEFAULT NULL,
+        PRIMARY KEY (`Key`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+        INSERT IGNORE INTO `<Placeholder Property="lockTableName" />` (`Key`,`Instance`,`LastLockTime`) VALUES(?pubKey,'',?lastLockTime);
+        INSERT IGNORE INTO `<Placeholder Property="lockTableName" />` (`Key`,`Instance`,`LastLockTime`) VALUES(?recKey,'',?lastLockTime);
+      </IsTrue>
+
     </Statement>
 
     <Statement Id="GetStatistics">
@@ -194,6 +207,27 @@
       WHERE `Version` = ?version
       AND ((`ExpiresAt` &lt; ?twoMinutesLater AND `StatusName` = 'Delayed') OR (`ExpiresAt` &lt; ?oneMinutesAgo AND `StatusName` = 'Queued'))
       FOR UPDATE
+    </Statement>
+
+    <Statement Id="AcquireLock">
+      UPDATE `<Placeholder Property="tableName" />`
+      SET `Instance`=?instance,`LastLockTime`=?lastLockTime
+      WHERE `Key`=?key
+      AND `LastLockTime` &lt; ?ttl
+    </Statement>
+
+    <Statement Id="ReleaseLock">
+      UPDATE `<Placeholder Property="tableName" />`
+      SET `Instance`= '',`LastLockTime`=?lastLockTime
+      WHERE `Key`=?key
+      AND `Instance`=?instance
+    </Statement>
+
+    <Statement Id="RenewLock">
+      UPDATE `<Placeholder Property="tableName" />`
+      SET `LastLockTime`=date_add(`LastLockTime`, interval ?totalSeconds second)
+      WHERE `Key`=?key
+      AND `Instance`=?instance
     </Statement>
 
   </Statements>

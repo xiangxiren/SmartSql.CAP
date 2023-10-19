@@ -5,16 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.3.0" />
-    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="7.0.1" />
-    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="7.0.1" />
-    <PackageReference Include="MySqlConnector" Version="2.2.3" />
-    <PackageReference Include="SmartSql" Version="4.1.64" />
-    <PackageReference Include="SmartSql.DIExtension" Version="4.1.64" />
-    <PackageReference Include="SmartSql.DyRepository" Version="4.1.64" />
+    <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.4.0" />
+    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="7.2.1" />
+    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="7.2.1" />
+    <PackageReference Include="MySqlConnector" Version="2.2.7" />
+    <PackageReference Include="SmartSql" Version="4.1.67" />
+    <PackageReference Include="SmartSql.DIExtension" Version="4.1.67" />
+    <PackageReference Include="SmartSql.DyRepository" Version="4.1.67" />
     <PackageReference Include="SmartSql.Schema" Version="4.1.30" />
-    <PackageReference Include="SmartSql.ScriptTag" Version="4.1.64" />
-    <PackageReference Include="SmartSql.TypeHandler" Version="4.1.64" />
+    <PackageReference Include="SmartSql.ScriptTag" Version="4.1.67" />
+    <PackageReference Include="SmartSql.TypeHandler" Version="4.1.67" />
   </ItemGroup>
 
   <ItemGroup>

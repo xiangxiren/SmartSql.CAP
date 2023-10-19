@@ -11,7 +11,8 @@ public interface ICapRepository
 {
     ISqlMapper SqlMapper { get; }
 
-    Task InitializeTablesAsync(string schema, string receivedTableName, string publishedTableName);
+    Task InitializeTablesAsync(string schema, string receivedTableName, string publishedTableName, bool userStorageLock,
+        string lockTableName, string pubKey, string recKey, DateTime lastLockTime);
 
     Task<StatisticsDto> GetStatisticsAsync(string receivedTableName, string publishedTableName);
 
@@ -44,4 +45,10 @@ public interface ICapRepository
 
     Task<List<MessagesOfNeedRetry>> GetMessagesOfDelayedAsync(string tableName, string version,
         DateTime twoMinutesLater, DateTime oneMinutesAgo);
+
+    Task<int> AcquireLockAsync(string tableName, string key, DateTime ttl, string instance, DateTime lastLockTime);
+
+    Task ReleaseLockAsync(string tableName, string key, string instance, DateTime lastLockTime);
+
+    Task RenewLockAsync(string tableName, string key, double totalSeconds, string instance);
 }

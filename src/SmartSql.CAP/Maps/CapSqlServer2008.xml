@@ -2,9 +2,15 @@
 
 <SmartSqlMap Scope="Cap" xmlns="http://SmartSql.net/schemas/SmartSqlMap.xsd">
 
+  <ParameterMaps>
+    <ParameterMap Id="InitializeTablesParamMap">
+      <Parameter Property="lastLockTime" DbType="DateTime2"/>
+    </ParameterMap>
+  </ParameterMaps>
+
   <Statements>
 
-    <Statement Id="InitializeTables" SourceChoice="Write">
+    <Statement Id="InitializeTables" SourceChoice="Write" ParameterMap="InitializeTablesParamMap">
       IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = '<Placeholder Property="schema" />')
       BEGIN
       EXEC('CREATE SCHEMA [<Placeholder Property="schema" />]')
@@ -46,6 +52,24 @@
       )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
       ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
       END;
+
+      <IsTrue Prepend="" Property="userStorageLock">
+        IF OBJECT_ID(N'<Placeholder Property="lockTableName" />',N'U') IS NULL
+        BEGIN
+        CREATE TABLE <Placeholder Property="lockTableName" />(
+        [Key] [nvarchar](128) NOT NULL,
+        [Instance] [nvarchar](256) NOT NULL,
+        [LastLockTime] [datetime2](7) NOT NULL,
+        CONSTRAINT [PK_<Placeholder Property="lockTableName" />] PRIMARY KEY CLUSTERED
+        (
+        [Key] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = ON, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        ) ON [PRIMARY]
+        END;
+
+        INSERT INTO <Placeholder Property="lockTableName" /> ([Key],[Instance],[LastLockTime]) VALUES(@pubKey,'',@lastLockTime);
+        INSERT INTO <Placeholder Property="lockTableName" /> ([Key],[Instance],[LastLockTime]) VALUES(@recKey,'',@lastLockTime);
+      </IsTrue>
     </Statement>
 
     <Statement Id="GetStatistics">
@@ -206,6 +230,27 @@
       WHERE Version = @version
       AND ((ExpiresAt &lt; @twoMinutesLater AND StatusName = 'Delayed')
       OR (ExpiresAt &lt; @oneMinutesAgo AND StatusName = 'Queued'))
+    </Statement>
+
+    <Statement Id="AcquireLock">
+      UPDATE <Placeholder Property="tableName" />
+      SET [Instance]=@instance,[LastLockTime]=@lastLockTime
+      WHERE [Key]=@Key
+      AND [LastLockTime] &lt; @ttl;
+    </Statement>
+
+    <Statement Id="ReleaseLock">
+      UPDATE <Placeholder Property="tableName" />
+      SET [Instance]='',[LastLockTime]=@lastLockTime
+      WHERE [Key]=@key
+      AND [Instance]=@instance
+    </Statement>
+
+    <Statement Id="RenewLock">
+      UPDATE <Placeholder Property="tableName" />
+      SET [LastLockTime]=DATEADD(s,@totalSeconds,LastLockTime)
+      WHERE [Key]=@key
+      AND [Instance]=@instance
     </Statement>
 
   </Statements>

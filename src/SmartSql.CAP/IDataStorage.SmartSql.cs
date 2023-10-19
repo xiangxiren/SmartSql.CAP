@@ -19,23 +19,38 @@ public class SmartSqlDataStorage : IDataStorage
     private readonly IOptions<CapOptions> _capOptions;
     private readonly IStorageInitializer _initializer;
     private readonly ISerializer _serializer;
+    private readonly ISnowflakeId _snowflakeId;
     private readonly ICapRepository _capRepository;
     private readonly string _pubName;
     private readonly string _recName;
+    private readonly string _lockName;
 
     public SmartSqlDataStorage(
         IOptions<CapOptions> capOptions,
         IStorageInitializer initializer,
         ISerializer serializer,
+        ISnowflakeId snowflakeId,
         ICapRepository capRepository)
     {
         _capOptions = capOptions;
         _initializer = initializer;
         _serializer = serializer;
+        _snowflakeId = snowflakeId;
         _capRepository = capRepository;
         _pubName = initializer.GetPublishedTableName();
         _recName = initializer.GetReceivedTableName();
+        _lockName = initializer.GetLockTableName();
     }
+
+    public async Task<bool> AcquireLockAsync(string key, TimeSpan ttl, string instance,
+        CancellationToken token = new()) =>
+        await _capRepository.AcquireLockAsync(_lockName, key, DateTime.Now.Subtract(ttl), instance, DateTime.Now) > 0;
+
+    public async Task ReleaseLockAsync(string key, string instance, CancellationToken token = new()) =>
+        await _capRepository.ReleaseLockAsync(_lockName, key, instance, DateTime.MinValue);
+
+    public async Task RenewLockAsync(string key, TimeSpan ttl, string instance, CancellationToken token = new()) =>
+        await _capRepository.RenewLockAsync(_lockName, key, ttl.TotalSeconds, instance);
 
     public async Task ChangePublishStateToDelayedAsync(string[] ids) =>
         await _capRepository.ChangePublishStateToDelayedAsync(_pubName, ids)
@@ -72,7 +87,7 @@ public class SmartSqlDataStorage : IDataStorage
 
     public async Task StoreReceivedExceptionMessageAsync(string name, string group, string content)
     {
-        await _capRepository.InsertReceivedMessageAsync(_recName, SnowflakeId.Default().NextId().ToString(),
+        await _capRepository.InsertReceivedMessageAsync(_recName, _snowflakeId.NextId().ToString(),
                 _capOptions.Value.Version, name, group, content, _capOptions.Value.FailedRetryCount, DateTime.Now,
                 DateTime.Now.AddSeconds(_capOptions.Value.FailedMessageExpiredAfter), nameof(StatusName.Failed))
             .ConfigureAwait(false);
@@ -82,7 +97,7 @@ public class SmartSqlDataStorage : IDataStorage
     {
         var mdMessage = new MediumMessage
         {
-            DbId = SnowflakeId.Default().NextId().ToString(),
+            DbId = _snowflakeId.NextId().ToString(),
             Origin = message,
             Added = DateTime.Now,
             ExpiresAt = null,

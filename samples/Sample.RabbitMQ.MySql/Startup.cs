@@ -45,6 +45,7 @@ namespace Sample.RabbitMQ.MySql
                     option.Password = Configuration["RabbitMQConfig:Password"]!;
                 });
                 options.UseDashboard();
+                options.UseStorageLock = true;
             });
 
             var assembly = Assembly.Load("Sample.RabbitMQ.MySql");
