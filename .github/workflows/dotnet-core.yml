@@ -1,25 +1,25 @@
-name: .NET Core
-
+name: Packages Publish
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  release:
+    types: [created]
 
 jobs:
-  build:
-
+  nuget-publish:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Pack
+        run: dotnet pack -c Release -o ./nuget
+        
+      - name: Publish
+        run: dotnet nuget push "./nuget/*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
