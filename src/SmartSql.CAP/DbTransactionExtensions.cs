@@ -51,17 +51,17 @@ public static class DbTransactionExtensions
         bool autoCommit = false)
     {
         sqlMapper.BeginTransaction();
-        if (publisher.Transaction.Value == null)
+        if (publisher.Transaction == null)
         {
             var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
 
             capTransaction.DbTransaction = sqlMapper;
             capTransaction.AutoCommit = autoCommit;
 
-            publisher.Transaction.Value = capTransaction;
+            publisher.Transaction = capTransaction;
         }
 
-        return publisher.Transaction.Value;
+        return publisher.Transaction;
     }
 
     /// <summary>
@@ -76,17 +76,17 @@ public static class DbTransactionExtensions
         ICapPublisher publisher, bool autoCommit = false)
     {
         sqlMapper.BeginTransaction(isolationLevel);
-        if (publisher.Transaction.Value == null)
+        if (publisher.Transaction == null)
         {
             var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
 
             capTransaction.DbTransaction = sqlMapper;
             capTransaction.AutoCommit = autoCommit;
 
-            publisher.Transaction.Value = capTransaction;
+            publisher.Transaction = capTransaction;
         }
 
-        return publisher.Transaction.Value;
+        return publisher.Transaction;
     }
 
     public static void CapTransactionWrap(this ISqlMapper sqlMapper, ICapPublisher publisher,
@@ -136,17 +136,17 @@ public static class DbTransactionExtensions
         bool autoCommit = false)
     {
         dbSession.BeginTransaction();
-        if (publisher.Transaction.Value == null)
+        if (publisher.Transaction == null)
         {
             var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
 
             capTransaction.DbTransaction = dbSession;
             capTransaction.AutoCommit = autoCommit;
 
-            publisher.Transaction.Value = capTransaction;
+            publisher.Transaction = capTransaction;
         }
 
-        return publisher.Transaction.Value;
+        return publisher.Transaction;
     }
 
     /// <summary>
@@ -161,17 +161,17 @@ public static class DbTransactionExtensions
         ICapPublisher publisher, bool autoCommit = false)
     {
         dbSession.BeginTransaction(isolationLevel);
-        if (publisher.Transaction.Value == null)
+        if (publisher.Transaction == null)
         {
             var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
 
             capTransaction.DbTransaction = dbSession;
             capTransaction.AutoCommit = autoCommit;
 
-            publisher.Transaction.Value = capTransaction;
+            publisher.Transaction = capTransaction;
         }
 
-        return publisher.Transaction.Value;
+        return publisher.Transaction;
     }
 
     public static void CapTransactionWrap(this IDbSession dbSession, ICapPublisher publisher,

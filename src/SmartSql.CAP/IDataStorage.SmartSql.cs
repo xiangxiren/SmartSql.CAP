@@ -116,11 +116,11 @@ public class SmartSqlDataStorage : IDataStorage
         CancellationToken token = default) =>
         await _capRepository.DeleteExpiresAsync(table, timeout, batchCount).ConfigureAwait(false);
 
-    public async Task<IEnumerable<MediumMessage>> GetPublishedMessagesOfNeedRetry() =>
-        await GetMessagesOfNeedRetryAsync(_pubName).ConfigureAwait(false);
+    public async Task<IEnumerable<MediumMessage>> GetPublishedMessagesOfNeedRetry(TimeSpan lookbackSeconds) =>
+        await GetMessagesOfNeedRetryAsync(_pubName, lookbackSeconds).ConfigureAwait(false);
 
-    public async Task<IEnumerable<MediumMessage>> GetReceivedMessagesOfNeedRetry() =>
-        await GetMessagesOfNeedRetryAsync(_recName).ConfigureAwait(false);
+    public async Task<IEnumerable<MediumMessage>> GetReceivedMessagesOfNeedRetry(TimeSpan lookbackSeconds) =>
+        await GetMessagesOfNeedRetryAsync(_recName, lookbackSeconds).ConfigureAwait(false);
 
     public async Task ScheduleMessagesOfDelayedAsync(Func<object, IEnumerable<MediumMessage>, Task> scheduleTask,
         CancellationToken token = default)
@@ -145,9 +145,9 @@ public class SmartSqlDataStorage : IDataStorage
 
     public IMonitoringApi GetMonitoringApi() => new SmartSqlMonitoringApi(_initializer, _capRepository);
 
-    private async Task<IEnumerable<MediumMessage>> GetMessagesOfNeedRetryAsync(string tableName)
+    private async Task<IEnumerable<MediumMessage>> GetMessagesOfNeedRetryAsync(string tableName, TimeSpan lookbackSeconds)
     {
-        var fourMinAgo = DateTime.Now.AddMinutes(-4);
+        var fourMinAgo = DateTime.Now.Subtract(lookbackSeconds);
         var list = await _capRepository.GetMessagesOfNeedRetryAsync(tableName,
                 _capOptions.Value.FailedRetryCount, _capOptions.Value.Version, fourMinAgo)
             .ConfigureAwait(false);

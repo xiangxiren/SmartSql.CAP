@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
-    <PackageReference Include="DotNetCore.CAP" Version="7.2.1" />
+    <PackageReference Include="DotNetCore.CAP" Version="8.1.2" />
     <PackageReference Include="SmartSql.DIExtension" Version="4.1.67" />
   </ItemGroup>
 

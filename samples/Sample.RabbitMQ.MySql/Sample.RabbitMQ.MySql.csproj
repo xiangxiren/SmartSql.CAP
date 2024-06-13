@@ -6,9 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.4.0" />
-    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="7.2.1" />
-    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="7.2.1" />
-    <PackageReference Include="MySqlConnector" Version="2.2.7" />
+    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.1.2" />
+    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.1.2" />
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
     <PackageReference Include="SmartSql" Version="4.1.67" />
     <PackageReference Include="SmartSql.DIExtension" Version="4.1.67" />
     <PackageReference Include="SmartSql.DyRepository" Version="4.1.67" />
