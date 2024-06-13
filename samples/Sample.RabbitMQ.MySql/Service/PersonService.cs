@@ -34,7 +34,15 @@ namespace Sample.RabbitMQ.MySql.Service
 
         public async Task MtAddAsync()
         {
+            // await _repository.SqlMapper.CapTransactionWrapAsync(_publisher, async () =>
+            // {
+            //     var person = new Person { Name = "test1" };
+            //     person.Id = await _repository.InsertAsync(person);
+            //     await _publisher.PublishAsync("sample.rabbitmq.mysql", person.Id);
+            // });
+
             using var trans = _repository.SqlMapper.BeginCapTransaction(_publisher);
+
             var person = new Person { Name = "test1" };
             person.Id = await _repository.InsertAsync(person);
             await _publisher.PublishAsync("sample.rabbitmq.mysql", person.Id);

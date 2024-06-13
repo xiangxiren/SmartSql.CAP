@@ -107,11 +107,22 @@ public class UserService
     public async Task MtAddAsync()
     {
         using var trans = _repository.SqlMapper.BeginCapTransaction(_publisher);
+        
         var person = new Person { Id = DateTime.Now.ToFileTimeUtc(), Name = "test1" };
         await _repository.InsertAsync(person);
         await _publisher.PublishAsync("sample.kafka.mysql", person.Id);
 
         await trans.CommitAsync();
+    }
+
+    public async Task MtAdd1Async()
+    {
+        await _repository.SqlMapper.CapTransactionWrapAsync(_publisher, async() =>
+        {
+            var person = new Person { Name = "test1" };
+            person.Id = await _repository.InsertAsync(person);
+            await _publisher.PublishAsync("sample.rabbitmq.mysql", person.Id);
+        });
     }
 }
 

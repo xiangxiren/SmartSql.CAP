@@ -33,19 +33,16 @@ public class CapTransactionAttribute : AbstractInterceptorAttribute
             throw new SmartSqlException($"Unable to resolve service for type {typeof(ICapPublisher).FullName}.");
         }
 
-        var transcation = sessionStore.LocalSession?.Transaction;
-        if (transcation != null)
+        var transaction = sessionStore.LocalSession?.Transaction;
+        if (transaction != null)
         {
             throw new SmartSqlException(
                 "SmartSqlMapper could not invoke BeginCapTransaction(). A CapTransaction is already existed.");
         }
 
-        using (sessionStore)
+        await sessionStore.Open().CapTransactionWrapAsync(Level, publisher, async () =>
         {
-            await sessionStore.Open().CapTransactionWrapAsync(Level, publisher, async () =>
-            {
-                await next.Invoke(context);
-            }, AutoCommit);
-        }
+            await next.Invoke(context);
+        }, AutoCommit);
     }
 }

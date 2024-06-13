@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
@@ -64,6 +65,7 @@ public class SmartSqlCapTransaction : CapTransactionBase
 
     public override void Dispose()
     {
+        (DbTransaction as IDisposable)?.Dispose();
         DbTransaction = null;
     }
 }

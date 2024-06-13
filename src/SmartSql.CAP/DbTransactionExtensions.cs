@@ -5,7 +5,6 @@ using DotNetCore.CAP;
 using Microsoft.Extensions.DependencyInjection;
 using SmartSql.DbSession;
 using SmartSql.DyRepository;
-using SmartSql.Exceptions;
 
 namespace SmartSql.CAP;
 
@@ -51,13 +50,18 @@ public static class DbTransactionExtensions
     public static ICapTransaction BeginCapTransaction(this ISqlMapper sqlMapper, ICapPublisher publisher,
         bool autoCommit = false)
     {
-        if (sqlMapper.SessionStore.LocalSession != null)
+        sqlMapper.BeginTransaction();
+        if (publisher.Transaction.Value == null)
         {
-            throw new SmartSqlException(
-                "SmartSqlMapper could not invoke BeginCapTransaction(). A LocalSession is already existed.");
+            var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
+
+            capTransaction.DbTransaction = sqlMapper;
+            capTransaction.AutoCommit = autoCommit;
+
+            publisher.Transaction.Value = capTransaction;
         }
 
-        return sqlMapper.SessionStore.Open().BeginCapTransaction(publisher, autoCommit);
+        return publisher.Transaction.Value;
     }
 
     /// <summary>
@@ -71,77 +75,50 @@ public static class DbTransactionExtensions
     public static ICapTransaction BeginCapTransaction(this ISqlMapper sqlMapper, IsolationLevel isolationLevel,
         ICapPublisher publisher, bool autoCommit = false)
     {
-        if (sqlMapper.SessionStore.LocalSession != null)
+        sqlMapper.BeginTransaction(isolationLevel);
+        if (publisher.Transaction.Value == null)
         {
-            throw new SmartSqlException(
-                "SmartSqlMapper could not invoke BeginCapTransaction(). A LocalSession is already existed.");
+            var capTransaction = ActivatorUtilities.CreateInstance<SmartSqlCapTransaction>(publisher.ServiceProvider);
+
+            capTransaction.DbTransaction = sqlMapper;
+            capTransaction.AutoCommit = autoCommit;
+
+            publisher.Transaction.Value = capTransaction;
         }
 
-        return sqlMapper.SessionStore.Open().BeginCapTransaction(isolationLevel, publisher, autoCommit);
+        return publisher.Transaction.Value;
     }
 
     public static void CapTransactionWrap(this ISqlMapper sqlMapper, ICapPublisher publisher,
         Action handler, bool autoCommit = false)
     {
-        var trans = sqlMapper.BeginCapTransaction(publisher, autoCommit);
-        try
-        {
-            handler();
-            trans.Commit();
-        }
-        catch (Exception)
-        {
-            trans.Rollback();
-            throw;
-        }
+        using var trans = sqlMapper.BeginCapTransaction(publisher, autoCommit);
+        handler();
+        trans.Commit();
     }
 
     public static void CapTransactionWrap(this ISqlMapper sqlMapper, IsolationLevel isolationLevel,
         ICapPublisher publisher, Action handler, bool autoCommit = false)
     {
-        var trans = sqlMapper.BeginCapTransaction(isolationLevel, publisher, autoCommit);
-        try
-        {
-            handler();
-            trans.Commit();
-        }
-        catch (Exception)
-        {
-            trans.Rollback();
-            throw;
-        }
+        using var trans = sqlMapper.BeginCapTransaction(isolationLevel, publisher, autoCommit);
+        handler();
+        trans.Commit();
     }
 
     public static async Task CapTransactionWrapAsync(this ISqlMapper sqlMapper, ICapPublisher publisher,
         Func<Task> handler, bool autoCommit = false)
     {
-        var trans = sqlMapper.BeginCapTransaction(publisher, autoCommit);
-        try
-        {
-            await handler();
-            await trans.CommitAsync();
-        }
-        catch (Exception)
-        {
-            await trans.RollbackAsync();
-            throw;
-        }
+        using var trans = sqlMapper.BeginCapTransaction(publisher, autoCommit);
+        await handler();
+        await trans.CommitAsync();
     }
 
     public static async Task CapTransactionWrapAsync(this ISqlMapper sqlMapper, IsolationLevel isolationLevel,
         ICapPublisher publisher, Func<Task> handler, bool autoCommit = false)
     {
-        var trans = sqlMapper.BeginCapTransaction(isolationLevel, publisher, autoCommit);
-        try
-        {
-            await handler();
-            await trans.CommitAsync();
-        }
-        catch (Exception)
-        {
-            await trans.RollbackAsync();
-            throw;
-        }
+        using var trans = sqlMapper.BeginCapTransaction(isolationLevel, publisher, autoCommit);
+        await handler();
+        await trans.CommitAsync();
     }
 
     #endregion
@@ -200,65 +177,33 @@ public static class DbTransactionExtensions
     public static void CapTransactionWrap(this IDbSession dbSession, ICapPublisher publisher,
         Action handler, bool autoCommit = false)
     {
-        var trans = dbSession.BeginCapTransaction(publisher, autoCommit);
-        try
-        {
-            handler();
-            trans.Commit();
-        }
-        catch (Exception)
-        {
-            trans.Rollback();
-            throw;
-        }
+        using var trans = dbSession.BeginCapTransaction(publisher, autoCommit);
+        handler();
+        trans.Commit();
     }
 
     public static void CapTransactionWrap(this IDbSession dbSession, IsolationLevel isolationLevel,
         ICapPublisher publisher, Action handler, bool autoCommit = false)
     {
-        var trans = dbSession.BeginCapTransaction(isolationLevel, publisher, autoCommit);
-        try
-        {
-            handler();
-            trans.Commit();
-        }
-        catch (Exception)
-        {
-            trans.Rollback();
-            throw;
-        }
+        using var trans = dbSession.BeginCapTransaction(isolationLevel, publisher, autoCommit);
+        handler();
+        trans.Commit();
     }
 
     public static async Task CapTransactionWrapAsync(this IDbSession dbSession, ICapPublisher publisher,
         Func<Task> handler, bool autoCommit = false)
     {
-        var trans = dbSession.BeginCapTransaction(publisher, autoCommit);
-        try
-        {
-            await handler();
-            await trans.CommitAsync();
-        }
-        catch (Exception)
-        {
-            await trans.RollbackAsync();
-            throw;
-        }
+        using var trans = dbSession.BeginCapTransaction(publisher, autoCommit);
+        await handler();
+        await trans.CommitAsync();
     }
 
     public static async Task CapTransactionWrapAsync(this IDbSession dbSession, IsolationLevel isolationLevel,
         ICapPublisher publisher, Func<Task> handler, bool autoCommit = false)
     {
-        var trans = dbSession.BeginCapTransaction(isolationLevel, publisher, autoCommit);
-        try
-        {
-            await handler();
-            await trans.CommitAsync();
-        }
-        catch (Exception)
-        {
-            await trans.RollbackAsync();
-            throw;
-        }
+        using var trans = dbSession.BeginCapTransaction(isolationLevel, publisher, autoCommit);
+        await handler();
+        await trans.CommitAsync();
     }
 
     #endregion
